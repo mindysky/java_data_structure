@@ -29,10 +29,10 @@ For members: fields, methods,nested class, nested interface
 
 **Access modifiers:**
 
-- **私有的（private）**— 成员只能被其声明的顶层类访问。
-- **包级私有（package-private）**—成员可以被所声明的类所在包的类访问。从技术上，被称为“默认”的访问级别，也就是你没有指定访问修饰符时的默认访问级别。（接口成员除外，它们的默认访问级别是公有的）
-- **受保护的（protected）**—成员可以被其声明的类的子类所访问，还可以被所声明的类所在包的类访问。
-- **公有的（public）**—成员在任何地方都可以被访问。
+- **私有的（private）**— The member is accessible only from the top-level class where it is declared.
+- **包级私有（package-private）**—The member is accessible from any class in the package where it is declared. Technically known as default access, this is the access level you get if no access modifier is specified (except for interface members, which are public by default).
+- **受保护的（protected）**—The member is accessible from subclasses of the class where it is declared (subject to a few restrictions [JLS, 6.6.2]) and from any class in the package where it is declared.
+- **公有的（public）**—The member is accessible from anywhere.
 
 **Instance fields of public classes should rarely be public**
 
@@ -75,9 +75,9 @@ accessor  methods: getters
 
 mutator methods: setters
 
-if a class is accessible outside its package, provide accessor methods to prevent the flexibility to change the class's internal 
+If a class is accessible outside its package, provide accessor methods to prevent the flexibility to change the class's internal 
 
-representation
+representation.
 
 if a class is package-private or is a private nested class, there is nothing inherently wrong with exposing its data fields
 
@@ -94,14 +94,22 @@ Five rules:
 **Advantage**:
 
 1. Immutable objects are inherently thread-safe; they require no synchronization.
-2.  Immutable objects can be shared freely.
+2. Immutable objects can be shared freely.
 3. Not only can you share immutable objects, but they can share their internals.
 4. Immutable objects make great building blocks for other objects.
 5. Immutable objects provide failure atomicity for free.  失败原子机制，不可能出现临时的不一致性
 
 **Disadvantage**：
 
-​	- Immutable classes require a separate object for each distinct value.
+ - Immutable classes require a separate object for each distinct value.
+
+   reason: create object can be costly, especial larger
+
+   mutable companion class: StringBuilder
+
+   和 String 类不同的是，StringBuffer 和 StringBuilder 类的对象能够被多次的修改，并且不产生新的未使用对象。
+
+   字符串连接: 方便和直接的方式是通过"+"符号来实现，但是这种方式达到目的的效率比较低，且每执行一次都会创建一个String对象，即耗时，又浪费空间, 使用StringBuilder类就可以避免这种问题的发生。
 
 **Summary:**
 
