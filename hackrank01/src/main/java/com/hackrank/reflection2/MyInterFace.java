@@ -1,2 +1,5 @@
-package com.hackrank.reflection2;public class MyInterFace {
+package com.hackrank.reflection2;
+
+public interface MyInterFace {
+    void info();
 }

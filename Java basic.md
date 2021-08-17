@@ -76,13 +76,17 @@ Set接口中没有新定义的方法，全部都是Collection方法
 
 无序性不等于随机性
 
+不可重复性： 保证添加的元素按照equals()判断时，不能返回true, 即相同的元素只能添加一个
+
 ##### HashSet
 
 作为set接口的主要实现类，线程不安全，可以存储null
 
 存储的数据再底层数组中并非按照数组索引的顺序添加，而是根据数据的Hash值决定的
 
-底层数组
+不可重复性也是根据hash值是否
+
+添加时才创建数组，底层数组，长度16
 
 ##### LinkedHashSet  
 
@@ -234,10 +238,8 @@ FQA:
      - ArrayList作为List接口的主要实现类
      - LinkedList 
      - Vector 作为List接口的古老实现类
-
+     - 
      
-
-
 
 ##### String
 
@@ -259,15 +261,181 @@ DateTimeFormatter
 
 ##### Java比较器
 
-Comparable接口
+Comparable接口:  自然排序 java.lang.Comparable
 
-Comparator接口
+1. String 实现了Comparable接口，重写了compareTo()方法，给出比较两个对象大小的方法
+2. 重写compareTo()的规则：
+   - 如果当前对象this大于形参对象，则返回正整数
+   - 如果当前对象this小于形参对象，则返回负整数
+   - 如果当前对象this等于形参对象，则返回零
+3. 对于自定义类，如果需要排序，可以让自定义类实现Comparable接口，重写compareTo(), 在compareTo()方法中指明如何排序
+
+Comparator接口： 定制排序 java.util.Comparator
+
+1. 当元素类型没有实现comparable接口，而又不方便修改代码，或者实现了comparable接口的排序规则不合适当前的操作，那么就可以考虑使用comparator的对象来排序，强行对多个对象进行整体的排序比较
+2. 重写compare(Object o1, Object o2)方法，比较o1, o2的大小，如果方法返回正整数，则表示O1大于O2， 如果返回0, 表示相等，如果返回负整数，则表示O1小于O2
+3. 可以将Comparator传递给Sort方法，从而允许在排序顺序上实现精确控制
+4. 还可以使用Comparator来控制数据结构（如有序Set或者有序映射）的顺序，或者为那些没有自然顺序的对象collection提供排序
 
 ##### System类
 
+private构造器，无法实例化，方法都是静态工厂方法，可通过类直接调用
+
+方法： 
+
+- currentTimeMillis()
+- exit
+- gc()   //请求系统进行垃圾回收，至于是否立即回收，则取决于系统中垃圾回收算法的实现及系统执行情况
+- getProperty(String key):  version, home, os.name, os.version, user.name, user.home, user.dir
+
 ##### Math类
 
-##### BigInteger & BigDecimal
+- abs
+- acos,asin,stan,cos,sin,tan 三角函数
+- sqrt平方根
+- pow(double a, double b)  a的b次幂
+- log 自然对数
+- exp  e为底指数
+- max(double a, double b)
+- min(double a, double b)
+- random()   返回0.0 到1.0的随机数
+- long round(double a)   double型数据a转换为long型
+- toDegrees(double angrad)   弧度 ->  角度
+- toRadians(double angdeg)    角度 ->  弧度
+
+##### BigInteger 
+
+- Integer类作为int的包装类，能存储的最大整型值为2^31-1 , Long类也是有限的，最大的为2\^63-1, 如果要表示再大的整数，不管基本数据类型还是他们的包装类型都无法运算
+- java.math包中的BigInterger可以表示不可变得任意精度的整数，BigInteger提供所有Java的基本整数操作符的对应物，并提供java.lang.Math的所有相关方法。另外BigInteger还提供以下运算： 模算术，GCD计算，质数测试，素数生成，位操作以及一些其他操作
+- 构造器BigInteger(String val): 根据字符串构建BigInteger对象
+- 常用方法： 
+  - add  +
+  - divide  /
+  - mutilply *
+  - subtract  -
+
+##### BigDecimal
+
+- 一般的Float类和Double类可以用来做科学计算或者工程计算，但是在商业计算中， 要求数字精度比较高，故用到java.math.BigDecimal类
+
+- BigDecimal类支持不可变的，任意精度的有符号十进制定点数
+
+- 构造器  
+
+  - public BigDecimal(double val)
+  - public BigDecimal(String val)
+
+  常用方法： 
+
+  - add(BigDecimal augend)
+  - subtract(BigDecimal subtrahend)
+  - multiply(BigDecimal multiplicand)
+  - divide(BigDecimal divisor, int scale, int roundingMode)
+
+  
+
+##### IO流
+
+1. 图片视频处理使用字节流  FileInputStream/FileOutputStream
+2. 文字处理使用字符流  FileReader/FileWriter
+3. 处理流套接在已有流的基础上，BufferedInputStream/BufferedOutputStream/BufferedReader/BufferedWriter
+4. 转换流输入字符流：字节流转字符流 InputStreamReader/OutputStreamWriter
+   - InputStreamReade 将输入字节的输入流转换为字符的输入流
+   - OutputStreamWriter 将一个字符的输出流转换为字节的输出流
+
+##### Java反射机制
+
+- reflection（反射）是被视为动态语言的关键，反射机制允许程序在执行期借助于Reflection API 取得任何类的内部信息，并能直接操作任意对象的内部属性及方法。
+
+- 加载完类之后，在堆内存得方法区中就会产生一个Class类型的对象（一个类只有一个Class对象），这个对象就包括了完整的类的结构信息，我们可以通过这个对象看到类的结构
+
+- 什么时候用反射：  反射的特性： 动态性
+
+  - 编译时不确定new哪个类的对象
+
+  
+
+##### java.lang.Class类的理解
+
+1. 类的加载过程
+   - 程序经过javac.exe命令后， 就会生成一个或者是多个字节码文件（.class)结尾。接着我们使用java.exe命令对某个字节码文件进行解释运行，相当于将某个字节码文件加载到内存中，此过程就称为类的加载，加载到内存中的类， 我们就称为运行时类，此运行时类，就作为Class的一个实例。
+   - Class的实例就对应着一个运行时类
+   - 加载到内存中的运行时类，会缓存一定的时间，在此时间之内，我们可以通过不同的方式来获取运行时类。
+2. 哪些类型可以有Class对象
+   1. class: 外部类，成员（成员内部类，静态内部类），局部内部类，匿名内部类
+   2. interface： 接口
+   3. []： 数组
+   4. enum
+   5. annotation:   注解@interface
+   6. primitive type:  基本数据类型
+   7. void
+
+
+
+##### 运算符
+
+比较运算符：==   !=  >  <  >=  <=  instanceof
+
+赋值运算符:
+
+算术运算符：
+
+位运算符：
+
+逻辑运算符：
+
+三元运算符：
+
+
+
+##### Stream ：数据源操作
+
+stream focuses on data calculation  => CPU
+
+collection focuses on data storage => memory
+
+1. create stream
+2. operate stream: 
+   - filter(Lambda)  过滤  /limit(n)  截断流 /skip(n)  跳过元素   /distinct()  筛选,去重
+   - map(fn)/flatMap(fn) 将流中的每个值都换成另一个流，然后把所有的流连成一个流，集合套集合用此方法
+   - sorted() 自然排序/ sorted(Comparator com) 自定义排序
+   - allMatch(Predicate p)/anyMatch(Predicate p)/noneMatch(Predicate p)/findFirst()/findAny()
+   - reduce(T iden, BinaryOperator b) 将流中元素反复结合起来，得到一个值，返回T
+   - reduce(BinaryOperator b)  可以将流中元素反复结合起来，得到一个值，返回Optional<T>
+   - collect(Collector c)  将流转换为其他形式，接受一个Collector接口的实现，用于给stream中元素做汇总的方法
+     - toList  /   toSet /  toCollection / counting / summingInt / averagingInt / summarizingInt /joining....
+3. end stream
+
+###### collection:
+
+collection.stream()
+
+collection.parallelStream(): 并行流，并行操作，同时去取数据
+
+###### Array:
+
+arr1= []
+
+Arrays.stream(arr1)
+
+###### Stream:
+
+Stream.of(1,2,3,4)
+
+##### Optional
+
+- Optional<T> 类时一个容器类，可以保存类型T的值，代表这个值存在，或者仅仅保存Null，表示这个值不存在
+- 以往用null表示一个值不存在，现在optional可以更好的表达，并且可以避免空指针
+
+
+
+
+
+
+
+
+
+
 
 
 

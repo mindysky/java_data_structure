@@ -1,5 +1,15 @@
 package com.hackrank.file;
 
-public class BufferInputOutputStreamTest {
-    
+import org.junit.Test;
+
+/*
+* 缓冲流
+* Buffer
+*
+* */
+public class BufferTest {
+    @Test
+    public void bufferedStreamTest(){
+
+    }
 }
