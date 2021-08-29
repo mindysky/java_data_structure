@@ -241,7 +241,21 @@ FQA:
      - 
      
 
-##### String
+##### String常用方法：
+
+1. intern()   返回常量池中的字符串
+2. length()
+3. boolean isEmpty()
+4. String toLowerCase()
+5. String toUpperCase()
+6. String trim()
+7. boolean equals(Object obj)
+8. boolean equlasIgnoreCase(String str)
+9. String concat(String str)   将指定字符串连接到此字符串的结尾，等价于“+”
+10. int compareTo(String str)  比较两个字符串的大小, 字符串排序
+11. String substring(int beginIndex)  返回新的字符串，从此字符串的beginIndex开始截取到最后
+12. String substring(int beginIndex, int endIndex) 返回新的字符串，包含beginIndex, 不包含endIndex
+13. 
 
 StringBuffer
 
