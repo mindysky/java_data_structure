@@ -118,6 +118,8 @@ Five rules:
 3. Declare every field private final unless there’s a good reason to do otherwise.
 4. Constructors should create fully initialized objects with all of their invariants established
 
+## Item 20: Prefer interfaces to abstract classes（接口优于抽象类）
+
 
 
 
