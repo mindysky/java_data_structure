@@ -122,13 +122,115 @@ Five rules:
 
 
 
+## Item 22: Use interfaces only to define types
 
+disadvantage:
 
+1. Implementing a constant interface causes this implementation detail to leak into the class’s exported API
+2.  it represents a commitment: if in a future release the class is modified so that it no longer needs to use the constants, it still must implement the interface to ensure binary compatibility.
+3. If a nonfinal class implements a constant interface, all of its subclasses will have their namespaces polluted by the constants in the interface.
 
+reasonable choices:
 
+1. If the constants are strongly tied to an existing class or interface, you should add them to the class or interface
 
+2. export the constants with a noninstantiable utility class
 
+3. ```
+   // Use of static import to avoid qualifying constants
+   import static com.effectivejava.science.PhysicalConstants.*;
+   ```
 
+In summary, interfaces should be used only to define types. They should not be used merely to export constants.
 
+## Item 23: Prefer class hierarchies to tagged classes（类层次结构优于带标签的类）
 
+Disadvantage:
+
+1. Tagged classes are verbose, error-prone, and inefficient.
+2. A tagged class is just a pallid imitation of a class hierarchy.
+
+```java
+// Class hierarchy replacement for a tagged class
+abstract class Figure {
+    abstract double area();
+}
+
+class Circle extends Figure {
+    final double radius;
+
+    Circle(double radius) {
+        this.radius = radius;
+    }
+
+    @Override
+    double area() {
+        return Math.PI * (radius * radius);
+    }
+}
+
+class Rectangle extends Figure {
+    final double length;
+    final double width;
+
+    Rectangle(double length, double width) {
+        this.length = length;
+        this.width = width;
+    }
+
+    @Override
+    double area() {
+        return length * width;
+    }
+}
+```
+
+advantage of class hierarchies:
+
+1. class hierarchy corrects every shortcoming of tagged classes noted previously
+2.  they can be made to reflect natural hierarchical relationships among types, allowing for increased flexibility and better compile-time type checking
+
+If you’re tempted to write a class with an explicit tag field, think about whether the tag could be eliminated and the class replaced by a hierarchy. When you encounter an existing class with a tag field, consider refactoring it into a hierarchy.
+
+## Item 24: Favor static member classes over nonstatic（静态成员类优于非静态成员类）
+
+There are four kinds of nested classes: static member classes, nonstatic member classes, anonymous classes, and local classes.
+
+##### static member classes： 
+
+One common use of a static member class is as a public helper class, useful only in conjunction with its outer class.
+
+ If an instance of a nested class can exist in isolation from an instance of its enclosing class, then the nested class must be a static member class.
+
+A common use of private static member classes is to represent components of the object represented by their enclosing class.
+
+##### nonstatic member classes：
+
+One common use of a nonstatic member class is to define an Adapter.
+
+Each instance of a nonstatic member class is implicitly associated with an enclosing instance of its containing class.
+
+The association between a nonstatic member class instance and its enclosing instance is established when the member class instance is created and cannot be modified thereafter.
+
+##### anonymous classes：
+
+1. You can’t instantiate them except at the point they’re declared
+2. You can’t perform instanceof tests or do anything else that requires you to name the class
+3. You can’t declare an anonymous class to implement multiple interfaces or to extend a class and implement an interface at the same time
+
+anonymous classes were the preferred means of creating small function objects and process objects on the fly, but lambdas are now preferred.
+
+Another common use of anonymous classes is in the implementation of static factory methods
+
+##### local classes： 
+
+**If you declare a member class that does not require access to an enclosing instance, always put the static modifier in its declaration**.
+
+When to use:
+
+If a nested class needs to be visible outside of a single method or is too long to fit comfortably inside a method, use a member class.
+
+ If each instance of a member class needs a reference to its enclosing instance, make it nonstatic;otherwise, make it static.
+
+Assuming the class belongs inside a method, if you need to create instances from only one location and there is a preexisting type that characterizes the class, make it an anonymous class; otherwise, make it a local class.
 

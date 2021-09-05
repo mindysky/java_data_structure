@@ -34,6 +34,7 @@
 20. **只能使用which**的几种情况：
     - 在“介词＋关系代词”结构中，关系代词必须用which   ：   The house in which we live is very large
     - 先行词为“those＋表事物的复数名词”时， 关系代词通常只用which而不用that  :   you should grasp well those skills which may be used in the future work
-21. 
+21. Memory footprint is increased because instances are burdened with irrelevant fields belonging to other flavors.
+22. When you encounter an existing class with a tag field, consider refactoring it into a hierarchy.
 
   

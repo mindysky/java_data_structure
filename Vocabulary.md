@@ -442,45 +442,125 @@
 
 164. backward compatibility   向下兼容; 向后兼容; 向后兼容性
 
-165. 
+165. binary compatibility  二进制兼容
 
-166. 
+166. rectangle   n. 矩形；长方形
 
-167. 
+167. clutter   n. 杂乱，混乱
 
-168. 
+     vt. 使凌乱；胡乱地填满
 
-169. 
+168. boilerplate    n. 样板文件；引用
 
-170. 
+169. jumbled    adj. 乱七八糟的
 
-171. 
+     vt. 搞乱（jumble的过去分词）
 
-172. 
+170. Readability    n. 可读性；易读
 
-173. 
+171. irrelevant  adj. 不相干的；不切题的
 
-174. 
+172. inefficient   adj. 无效率的，效率低的；无能的
 
-175. 
+173. verbose  adj. 冗长的；啰嗦的  
 
-176. 
+174. error-prone    adj. 易于出错的
 
-177. 
+175. capable    adj. 有能力的；有才干的；容许……的；可以做（某事）的；综合性的；有资格的
 
-178. 
+176. capable of    有…能力的；可…的
 
-179. 
+177. pallid  adj. 苍白的；暗淡的；无生气的
 
-180. 
+178. radius    n. 半径，半径范围；[解剖] 桡骨；辐射光线；有效航程
 
-181. 
+179. particular  adj. 特别的；详细的；独有的；挑剔的
 
-182. 
+     n. 详细说明；个别项目
 
-183. 
+180. allot    vt. 分配；拨给；分派
 
-184. 
+181. allotted   adj. 专款的；拨出的
+
+     v. 分配；指派；拨给（allot的过去分词）
+
+182. encumber  vt. 阻塞；妨害；拖累
+
+183. encumbered   adj. 妨碍性的
+
+     v. 阻碍；使承担义务；堵塞（encumber的过去分词）
+
+184. interoperable    adj. （计算机系统或软件、不同机器）可共同操作的，可互换利用信息的，可配合动作的
+
+185. interoperability  n. [计] 互操作性；互用性
+
+186. associated with    与…有关系；与…相联系
+
+187. associate  v. 联想，联系；（使）关联；与（不被认同的人）交往；将……和……联系起来；表示同意
+
+     n. （生意或工作上的）伙伴；准会员；联想；准零售工
+
+     adj. （与某组织或企业）联合的；副的
+
+188. input parameters 输入参数
+
+189. brevity   n. 简洁，简短；短暂，短促
+
+190. seldom  adv. 很少，不常
+
+191. tempt to  试图
+
+192. anonymous   adj. 匿名的，无名的；无个性特征的
+
+193. and so forth  等等
+
+194. takes up space  占空间 
+
+195. enclosing instance  封闭实例
+
+196. catastrophic  adj. 灾难的；悲惨的；灾难性的，毁灭性的
+
+197. superfluous  adj. 多余的；不必要的；奢侈的
+
+198. applicability  n. 适用性；适应性
+
+199. in the midst of  在.....之中
+
+200. preexisting    早已存在的; 先存的
+
+201. enclosing class  外部类
+
+202. 
+
+203. 
+
+204. 
+
+205. 
+
+206. 
+
+207. 
+
+208. 
+
+209. 
+
+210. 
+
+211. 
+
+212. 
+
+213. 
+
+214. 
+
+215. 
+
+216. 
+
+217. 
 
 
 
