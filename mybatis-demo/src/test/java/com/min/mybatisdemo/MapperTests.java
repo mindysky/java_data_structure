@@ -56,4 +56,10 @@ public class MapperTests {
         System.out.println(i);
     }
 
+    @Test
+    public void selectByName(){
+        List<User> users = userMapper.selectAllByName("tom");
+        users.forEach(System.out::println);
+    }
+
 }

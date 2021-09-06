@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.min.mybatisdemo.mapper.UserMapper">
+
+    <sql id="Base_Column_List">
+        id, name, age, email
+    </sql>
+    <select id="selectAllByName" resultType="com.min.mybatisdemo.entity.User">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where
+        name = #{name}
+    </select>
+
+</mapper>

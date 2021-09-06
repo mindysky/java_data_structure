@@ -36,5 +36,12 @@
     - 先行词为“those＋表事物的复数名词”时， 关系代词通常只用which而不用that  :   you should grasp well those skills which may be used in the future work
 21. Memory footprint is increased because instances are burdened with irrelevant fields belonging to other flavors.
 22. When you encounter an existing class with a tag field, consider refactoring it into a hierarchy.
+23. ensure readable and understandable
+24. sorry to ...., we owe the client a response.
+25. got a lot to catch up on
+26. can u clarify if it is just one?
+27. for testing purposes
+28. in production
+29. have a thought on something
 
   
