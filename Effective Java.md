@@ -234,3 +234,5 @@ If a nested class needs to be visible outside of a single method or is too long 
 
 Assuming the class belongs inside a method, if you need to create instances from only one location and there is a preexisting type that characterizes the class, make it an anonymous class; otherwise, make it a local class.
 
+## Item 25: Limit source files to a single top-level class（源文件仅限有单个顶层类）
+

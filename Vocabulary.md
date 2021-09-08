@@ -636,21 +636,21 @@
 
 237. interceptor    n. 拦截机；妨碍者；截击机；拦截者，拦截器
 
-238. 
+238. unified  adj. 统一的；一致标准的
 
-239. 
+239. unify   v. 整合，联合；统一，使成一体
 
-240. 
+240. sufficiently  adv. 充分地；足够地
 
-241. 
+241. harmonised  v. （使）协调，和谐；使统一；为（主调）配和声（harmonise 的过去式和过去分词，等于 harmonize）
 
-242. 
+243. harmonize  vt. 使和谐
 
-243. 
+244. compel  vt. 强迫，迫使；强使发生
 
-244. 
+245. incessant
 
-245. 
+246. synonymous
 
 246. 
 
