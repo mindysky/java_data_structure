@@ -327,9 +327,31 @@ TimeBasedRollingPolicy：最常用的滚动策略，根据时间来制定滚动�
 
 ## 
 
+## nginx的配置
 
+```
+server {
+    listen       80;
+    server_name  localhost;
+    location ~ /core/ {           
+        proxy_pass http://localhost:8110;
+    }
+    location ~ /sms/ {           
+        proxy_pass http://localhost:8120;
+    }
+    location ~ /oss/ {           
+            proxy_pass http://localhost:8130;
+    }
+}
+```
 
+nginx的命令
 
+```
+start nginx #启动
+nginx -s stop #停止
+nginx -s reload #重新加载配置
+```
 
 
 
