@@ -236,3 +236,72 @@ Assuming the class belongs inside a method, if you need to create instances from
 
 ## Item 25: Limit source files to a single top-level class（源文件仅限有单个顶层类）
 
+disadvantage:
+
+1. defining multiple top-level classes in a source file makes it possible to provide multiple definitions for a class,Which definition gets used is affected by the order in which the source files are passed to the compiler
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        System.out.println(Utensil.NAME + Dessert.NAME);
+    }
+}
+//Utensil
+// Two classes defined in one file. Don't ever do this!
+class Utensil {
+    static final String NAME = "pan";
+}
+
+class Dessert {
+    static final String NAME = "cake";
+}
+
+//Dessert
+// Two classes defined in one file. Don't ever do this!
+class Utensil {
+    static final String NAME = "pot";
+}
+
+class Dessert {
+    static final String NAME = "pie";
+}
+
+```
+
+
+
+Fixing the problem is as simple as splitting the top-level classes (Utensil and Dessert, in the case of our example) into separate source files.
+
+If you are tempted to put multiple top-level classes into a single source file, consider using static member classes (Item 24) as an alternative to splitting the classes into separate source files. 
+
+```java
+// Static member classes instead of multiple top-level classes
+public class Test {
+
+    public static void main(String[] args) {
+        System.out.println(Utensil.NAME + Dessert.NAME);
+    }
+
+    private static class Utensil {
+        static final String NAME = "pan";
+    }
+
+    private static class Dessert {
+        static final String NAME = "cake";
+    }
+}
+```
+
+Never put multiple top-level classes or interfaces in a single source file.
+
+
+
+
+
+## Item 26: Don’t use raw types（不要使用原始类型）
+
+**If you use raw types, you lose all the safety and expressiveness benefits of generics**
+
+the raw type List and the parameterized type `List<Object>`
+
+`Set<E>` is `Set<?>` (read “set of some type”)

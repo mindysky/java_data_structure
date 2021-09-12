@@ -65,16 +65,11 @@
 
     </appender>
 
-
-    <!--    <logger name="com.atguigu" level="INFO">-->
-    <!--        <appender-ref ref="CONSOLE" />-->
-    <!--        <appender-ref ref="FILE" />-->
-    <!--    </logger>-->
-
     <!-- 开发环境和测试环境 -->
     <springProfile name="dev,test">
         <logger name="com.min" level="INFO">
             <appender-ref ref="CONSOLE" />
+            <appender-ref ref="FILE" />
         </logger>
     </springProfile>
 

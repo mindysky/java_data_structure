@@ -648,33 +648,217 @@
 
 244. compel  vt. 强迫，迫使；强使发生
 
-245. incessant
+245. incessant  adj. 不断的；不停的；连续的
 
-246. synonymous
+246. synonymous  adj. 同义的；同义词的；同义突变的
 
-246. 
+246. look out for  留心，提防；留意找，设法得到
 
-247. 
+248. energise  vt. 供给…能量；使精力充沛（等于energize）
 
-248. 
+249. predominantly  adv. 主要地；显著地
 
-249. 
+249. collaboration  n. 合作；勾结；通敌  
 
-250. 
+250. geopolitical  adj. 地理政治学的
 
-251. 
+251. tensile  adj. [力] 拉力的；可伸长的；可拉长的fil
 
-252. 
+252. fill light  补充光线；辅助光
 
-253. 
+253. compatible  adj. 兼容的；能共处的；可并立的de
 
-254. 
+254. detachable  adj. 可拆卸的，可分开的lamp
 
-255. 
+255. lamp bead 灯珠
 
-256. 
+256. lamp base 灯座，[电] 灯头；管底
 
-257. 
+257. indicator light  指示灯
+
+258. go out 出去；熄灭；过时
+
+259. go out for a walk
+
+260. counterfeit  adj. （钱币或商品）伪造的，假冒的；（古旧用法）假装的，虚假的
+
+     v. 伪造，仿造，造假；假装；（文）酷似
+
+     n. 仿冒品，伪造物，赝品
+
+261. retrieval   n. 检索；恢复；取回；拯救
+
+262. traceability  n. [统计] 可追溯性；跟踪能力；可描绘
+
+263. vouch  vt. 担保；证明；传出庭作证
+
+     vi. 保证；证明；确定
+
+264. facilitation  n. 简易化；[生理] 助长；容易
+
+265. substantiate     vt. 证实；使实体化
+
+266. be able to substantiate in
+
+267. detrimentally  adv. 有害地；不利地
+
+268. mighty     adj. 有力的；强有力的；有势力的
+
+     adv. 很；极；非常
+
+     n. 有势力的人
+
+269. given time   给定时间
+
+270. unwanted  adj. 不需要的；有害的；讨厌的；空闲的
+
+271. raspberry   n. 覆盆子；舌头放在唇间发出的声音；（表示轻蔑，嘲笑等的）咂舌声
+
+272. cranberry  n. 蔓越橘
+
+273. mulberry  n. 桑树；桑葚，桑椹；深紫红色
+
+274. aroma  n. 芳香    cooked food
+
+275. fragrance   n. 香味，芬芳    flower & plants
+
+276. weird smell  怪味的
+
+277. burn out  烧坏；烧尽；不再热衷
+
+278. syllabus  n. 教学大纲，摘要；课程表
+
+279. dire  adj. 可怕的；悲惨的；极端的
+
+280. webcast  n. 网络广播；网络直播
+
+     v. 在网络上直播
+
+281. treadmill   n. 踏车，跑步机；单调的工作
+
+282. nag  n. 唠叨；老马；竞赛马
+
+     vt. 使烦恼；不断地唠叨
+
+     vi. 不断地唠叨
+
+283. scratch  n. 擦伤；抓痕；刮擦声；乱写
+
+     adj. 打草稿用的；凑合的；碰巧的
+
+     vt. 抓；刮；挖出；乱涂
+
+     vi. 抓；搔；发刮擦声；勉强糊口；退出比赛
+
+284. semester  n. 学期；半年
+
+285. packet  n. 数据包，信息包；小包，小捆
+
+     vt. 包装，打包
+
+286. flicks  推击球,  绒毛 , 微跳
+
+287. dabble    vt. 溅湿；浸入水中
+
+     vi. 涉猎；涉足；玩水
+
+288. bust  v. 打破；炸破；猛烈打击；突击搜捕
+
+     n. 胸围；半身像；经济萧条；逮捕； 没价值的事物
+
+     adj. 坏的；破产的
+
+289. cubicle    n. 小卧室；小隔间
+
+290. practitioner   n. 开业者，从业者，执业医生
+
+291. fixed assets   [工经] 固定资产
+
+292. outsource  vt. 把…外包
+
+     vi. 外包
+
+293. for-profit  以盈利为目的的
+
+294. garnish  v. 装饰（尤指食物）；（为合法扣押属于债务人或被告的钱财）传讯（第三方）
+
+     n. （为增加色香味而添加的）配菜，装饰品
+
+295. synergy  n. 协同；协同作用；增效
+
+     n. 协同效果（游戏术语
+
+296. inequity    n. 不公平，不公正
+
+297. dividend  n. 红利；股息；[数] 被除数；奖金
+
+298. buyback  n. 回购，回买协议
+
+299. admission   n. 承认；入场费；进入许可；坦白；录用
+
+300. cash back 现金返还
+
+301. mind-blowing  adj. 使兴奋的；引起幻觉的；令人印象极深刻的，令人极震惊的
+
+302. glorified   adj. 变荣耀的，美其名的
+
+303. glorify  vt. 赞美；美化；崇拜（神）；使更壮丽
+
+304. acquisition  n. 获得物，获得；收购
+
+305. slash  vt. 猛砍；鞭打；严厉批评；大幅度裁减或削减
+
+     vi. 猛砍；严厉批评
+
+     n. 削减；斜线；猛砍；砍痕；沼泽低地
+
+306. well-functioning  完善的， 运行良好的
+
+307. functioning  n. 运行，运作；[计] 功能；机能；起酌
+
+308. the walking dead  行尸走肉
+
+309. exemplary    adj. 典范的；惩戒性的；可仿效的
+
+310. declaration  n. （纳税品等的）申报；宣布；公告；申诉书
+
+311. warnings   n. 警告信息（warning的复数形式）
+
+312. erroneous   adj. 错误的；不正确的
+
+313. insertion   n. 插入；嵌入；插入物
+
+314. retrieving    v. 取回，索回；检索数据；挽回，找回；收绕钓鱼线；捡起；回忆；（狗）找到并衔回（中枪猎物）（retrieve 的现在分词）
+
+315. opt  
+
+316. incompatible  adj. 不相容的；矛盾的；不能同时成立的
+
+     n. 互不相容的人或事物
+
+317. wildcard   n. 通配符
+
+318. 
+
+319. 
+
+320. 
+
+321. 
+
+322. 
+
+323. 
+
+324. 
+
+325. 
+
+326. 
+
+327. 
+
+328. 
 
 
 

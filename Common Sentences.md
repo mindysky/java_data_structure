@@ -43,9 +43,11 @@
 27. for testing purposes
 28. in production
 29. have a thought on something
-30. flexible nad timely
+30. flexible nad timelypre
 31. supprot biz growth
-32. protect ...
-33. effective monitoring
+32. effective monitoring
+33. please make time to get involved
+34. add something on the jira
+35. completely forget something
 
   
