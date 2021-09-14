@@ -198,25 +198,49 @@ There are four kinds of nested classes: static member classes, nonstatic member 
 
 ##### static member classes： 
 
+has access to all the enclosing class's members even those declared private.
+
+private static :  accessible within the enclosing class
+
 One common use of a static member class is as a public helper class, useful only in conjunction with its outer class.
 
  If an instance of a nested class can exist in isolation from an instance of its enclosing class, then the nested class must be a static member class.
 
 A common use of private static member classes is to represent components of the object represented by their enclosing class.
 
+example: Map's entry  
+
+```java
 Outer.Inner  inner=new Outer.Inner（);
+```
+
+example:  calculator   operation enum 
+
+​                   Builder
 
 ##### nonstatic member classes：
 
+can not exist isolation:  must associated with enclosing instance
+
 One common use of a nonstatic member class is to define an Adapter.
+
+example:  Map's  entrySet  keySet   values method   use nonstatic class to implement their iterators
 
 Each instance of a nonstatic member class is implicitly associated with an enclosing instance of its containing class.
 
 The association between a nonstatic member class instance and its enclosing instance is established when the member class instance is created and cannot be modified thereafter.
 
+takes up space and time
+
+```java
 Outer outer=new Outer（);
 
 Outer.Inner  inner=outer.new Inner（);
+```
+
+retain in memory would be eligible  for GC
+
+memory leak
 
 ##### anonymous classes：
 
@@ -228,9 +252,27 @@ anonymous classes were the preferred means of creating small function objects an
 
 Another common use of anonymous classes is in the implementation of static factory methods
 
-##### local classes： 
+should be short or will harm readability
 
+```java
+new A(){
+    @Override
+    method(){}
+}
+```
 
+##### local classes：
+
+can be declared anywhere a local variables can declared
+
+obey the same scope rules
+
+```java
+method(){
+    class A(){
+    }
+} 
+```
 
 **If you declare a member class that does not require access to an enclosing instance, always put the static modifier in its declaration**.
 
@@ -246,7 +288,9 @@ Assuming the class belongs inside a method, if you need to create instances from
 
 disadvantage:
 
-1. defining multiple top-level classes in a source file makes it possible to provide multiple definitions for a class,Which definition gets used is affected by the order in which the source files are passed to the compiler
+1. defining multiple top-level classes in a source file makes it possible to provide multiple definitions for a class,Which definition gets used is affected by the order in which the source files are passed to the compiler.
+2. effect factor:  which command or commands used, in which order the command be seen by compliler, which complier used
+3. unpredictable behavior
 
 ```java
 public class Main {
@@ -276,8 +320,6 @@ class Dessert {
 
 ```
 
-
-
 Fixing the problem is as simple as splitting the top-level classes (Utensil and Dessert, in the case of our example) into separate source files.
 
 If you are tempted to put multiple top-level classes into a single source file, consider using static member classes (Item 24) as an alternative to splitting the classes into separate source files. 
@@ -301,10 +343,6 @@ public class Test {
 ```
 
 Never put multiple top-level classes or interfaces in a single source file.
-
-
-
-
 
 ## Item 26: Don’t use raw types（不要使用原始类型）
 
