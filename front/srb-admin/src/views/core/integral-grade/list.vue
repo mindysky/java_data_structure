@@ -10,7 +10,7 @@
         <template slot-scope="scope">
           <router-link
             :to="'/core/integral-grade/edit/' + scope.row.id"
-            style="margin-right:5px;"
+            style="margin-right: 5px"
           >
             <el-button type="primary" size="mini" icon="el-icon-edit">
               修改
@@ -32,13 +32,12 @@
 </template>
 
 <script>
-//引入api模块
 import integralGradeApi from '@/api/core/integral-grade'
 
 export default {
   data() {
     return {
-      list: [] //积分等级列表
+      list: [],
     }
   },
 
@@ -48,7 +47,7 @@ export default {
 
   methods: {
     fetchData() {
-      integralGradeApi.list().then(response => {
+      integralGradeApi.list().then((response) => {
         this.list = response.data.list
       })
     },
@@ -60,29 +59,29 @@ export default {
       this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
       })
         .then(() => {
           return integralGradeApi.removeById(id)
         })
-        .then(response => {
+        .then((response) => {
           this.$message({
             message: response.message,
-            type: 'success'
+            type: 'success',
           })
           this.fetchData()
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('catch的error', error)
           if (error === 'cancel') {
             this.$message({
               type: 'info',
-              message: '已取消删除'
+              message: '已取消删除',
             })
           }
         })
-    }
-  }
+    },
+  },
 }
 </script>
 

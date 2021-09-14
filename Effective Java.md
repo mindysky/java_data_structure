@@ -204,6 +204,8 @@ One common use of a static member class is as a public helper class, useful only
 
 A common use of private static member classes is to represent components of the object represented by their enclosing class.
 
+Outer.Inner  inner=new Outer.Inner（);
+
 ##### nonstatic member classes：
 
 One common use of a nonstatic member class is to define an Adapter.
@@ -211,6 +213,10 @@ One common use of a nonstatic member class is to define an Adapter.
 Each instance of a nonstatic member class is implicitly associated with an enclosing instance of its containing class.
 
 The association between a nonstatic member class instance and its enclosing instance is established when the member class instance is created and cannot be modified thereafter.
+
+Outer outer=new Outer（);
+
+Outer.Inner  inner=outer.new Inner（);
 
 ##### anonymous classes：
 
@@ -223,6 +229,8 @@ anonymous classes were the preferred means of creating small function objects an
 Another common use of anonymous classes is in the implementation of static factory methods
 
 ##### local classes： 
+
+
 
 **If you declare a member class that does not require access to an enclosing instance, always put the static modifier in its declaration**.
 

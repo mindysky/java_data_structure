@@ -1,11 +1,13 @@
 package com.min.core.controller.api;
 
+import com.min.common.result.R;
 import com.min.common.result.ResponseEnum;
 import com.min.core.pojo.vo.RegisterVO;
 import com.min.core.service.UserInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
