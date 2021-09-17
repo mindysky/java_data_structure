@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -85,5 +86,20 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
             log.error("redis服务器异常：" + ExceptionUtils.getStackTrace(e));//此处不抛出异常，继续执行后面的代码
         }
         return dictList;
+    }
+
+    /**
+     * 判断当前id所在的节点下是否有子节点
+     * @param id
+     * @return
+     */
+    private boolean hasChildren(Long id){
+        QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
+        dictQueryWrapper.eq("parent_id", id);
+        Integer count = baseMapper.selectCount(dictQueryWrapper);
+        if(count.intValue() > 0){
+            return true;
+        }
+        return false;
     }
 }

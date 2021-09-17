@@ -18,4 +18,5 @@ import java.util.List;
 public interface DictService extends IService<Dict> {
     void importData(InputStream inputStream);
     List<ExcelDictDTO> listDictData();
+    List<Dict> listByParentId(Long parentId);
 }

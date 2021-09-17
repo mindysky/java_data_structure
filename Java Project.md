@@ -512,6 +512,47 @@ public class ExcelReadTest {
 
 
 
+## Redis
+
+https://github.com/MicrosoftArchive/redis/releases
+
+#### 执行下面命令
+
+```
+redis-server.exe redis.windows.conf --maxmemory 200M
+```
+
+#### 常用的写入键值对命令和开启密码登录redis操作
+
+```
+start redis:
+redis-cli.exe
+
+set name  ....
+
+get name ...
+
+config get requirepass  =》 check password  default without password
+
+config set requirepass ...
+
+auth ...     => login by password
+
+```
+
+#### 注册开机自启动服务
+
+```
+#注册安装服务
+redis-server --service-install redis.windows.conf --loglevel verbose
+#卸载服务
+#redis-server --service-uninstall
+```
+
+
+
+
+
 
 
 

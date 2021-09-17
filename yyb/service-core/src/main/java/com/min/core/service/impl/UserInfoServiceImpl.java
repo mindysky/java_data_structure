@@ -1,7 +1,10 @@
 package com.min.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.min.base.util.JwtUtils;
+import com.min.common.exception.Assert;
 import com.min.common.result.ResponseEnum;
+import com.min.common.util.MD5;
 import com.min.core.mapper.UserAccountMapper;
 import com.min.core.mapper.UserLoginRecordMapper;
 import com.min.core.pojo.entity.UserAccount;
@@ -15,7 +18,6 @@ import com.min.core.service.UserInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.security.provider.MD5;
 
 import javax.annotation.Resource;
 
