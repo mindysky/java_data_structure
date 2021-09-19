@@ -14,7 +14,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+import javax.annotation.Resource;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,10 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements DictService {
+    @Resource
+    private RedisTemplate<String, List<Dict>> redisTemplate;
     @Transactional(rollbackFor = {Exception.class})
+
     @Override
     public void importData(InputStream inputStream) {
         // 这里 需要指定读用哪个class去读，然后读取第一个sheet 文件流会自动关闭
@@ -40,7 +45,6 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     }
     @Override
     public List<ExcelDictDTO> listDictData() {
-
         List<Dict> dictList = baseMapper.selectList(null);
         //创建ExcelDictDTO列表，将Dict列表转换成ExcelDictDTO列表
         ArrayList<ExcelDictDTO> excelDictDTOList = new ArrayList<>(dictList.size());
@@ -53,15 +57,12 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         return excelDictDTOList;
     }
 
-    private RedisTemplate redisTemplate;
-
     @Override
     public List<Dict> listByParentId(Long parentId) {
-
         //先查询redis中是否存在数据列表
         List<Dict> dictList = null;
         try {
-            dictList = (List<Dict>)redisTemplate.opsForValue().get("srb:core:dictList:" + parentId);
+            dictList = redisTemplate.opsForValue().get("srb:core:dictList:" + parentId);
             if(dictList != null){
                 log.info("从redis中取值");
                 return dictList;
@@ -97,9 +98,6 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
         dictQueryWrapper.eq("parent_id", id);
         Integer count = baseMapper.selectCount(dictQueryWrapper);
-        if(count.intValue() > 0){
-            return true;
-        }
-        return false;
+        return count > 0;
     }
 }

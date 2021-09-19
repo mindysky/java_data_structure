@@ -25,4 +25,10 @@ public class RedisTemplateTests {
         Dict dict = dictMapper.selectById(1);
         redisTemplate.opsForValue().set("dict",dict,5, TimeUnit.MINUTES);
     }
+
+    @Test
+    public void getDict(){
+        Dict dict = (Dict) redisTemplate.opsForValue().get("dict");
+        System.out.println(dict);
+    }
 }

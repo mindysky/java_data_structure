@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div style="margin-bottom: 10px;">
+    <div style="margin-bottom: 10px">
       <!-- Excel导入按钮 -->
       <el-button
         @click="dialogVisible = true"
@@ -42,9 +42,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">
-          取消
-        </el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
       </div>
     </el-dialog>
 
@@ -64,7 +62,7 @@ export default {
     return {
       dialogVisible: false, //对话框是否显示
       BASE_API: process.env.VUE_APP_BASE_API, //获取后端接口地址
-      list: [] //数据字典列表
+      list: [], //数据字典列表
     }
   },
 
@@ -75,7 +73,7 @@ export default {
   methods: {
     //获取数据字典列表
     fetchData() {
-      dictApi.listByParentId(1).then(response => {
+      dictApi.listByParentId(1).then((response) => {
         this.list = response.data.list
       })
     },
@@ -96,10 +94,9 @@ export default {
         this.$message.error(response.message)
       }
     },
-
     //上传失败回调：通信失败
     fileUploadError(error) {
-      this.$message.error('数据导入失败')
+      this.$message.error(error)
     },
 
     exportData() {
@@ -112,10 +109,10 @@ export default {
       console.log('tree', tree)
       console.log('treeNode', treeNode)
       //获取数据
-      dictApi.listByParentId(tree.id).then(response => {
+      dictApi.listByParentId(tree.id).then((response) => {
         resolve(response.data.list)
       })
-    }
-  }
+    },
+  },
 }
 </script>
