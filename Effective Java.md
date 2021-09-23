@@ -211,7 +211,7 @@ A common use of private static member classes is to represent components of the 
 example: Map's entry  
 
 ```java
-Outer.Inner  inner=new Outer.Inner（);
+Outer.Inner inner=new Outer.Inner（);
 ```
 
 example:  calculator   operation enum 
@@ -235,7 +235,7 @@ takes up space and time
 ```java
 Outer outer=new Outer（);
 
-Outer.Inner  inner=outer.new Inner（);
+Outer.Inner inner=outer.new Inner（);
 ```
 
 retain in memory would be eligible  for GC
@@ -255,10 +255,15 @@ Another common use of anonymous classes is in the implementation of static facto
 should be short or will harm readability
 
 ```java
-new A(){
+Runnable run1 = new Runnable(){
     @Override
-    method(){}
+    void method(){
+        print('run')
+    }
 }
+
+Runnable run2 = ()->print("run");
+    
 ```
 
 ##### local classes：
@@ -273,6 +278,16 @@ method(){
     }
 } 
 ```
+
+Only can use in current method
+
+can not use access modifer
+
+can not declare static member in a local class
+
+can access all the outer class member
+
+
 
 **If you declare a member class that does not require access to an enclosing instance, always put the static modifier in its declaration**.
 
@@ -351,3 +366,38 @@ Never put multiple top-level classes or interfaces in a single source file.
 the raw type List and the parameterized type `List<Object>`
 
 `Set<E>` is `Set<?>` (read “set of some type”)
+
+`List<String>` (read “list of string”) 
+
+String is the actual type parameter corresponding to the formal type parameter E.
+
+the raw type corresponding to `List<E>` is List
+
+it pays to discover errors as soon as possible after they are made, ideally at compile time. In this case, you don’t discover the error until runtime, long after it has happened, and in code that may be distant from the code containing the error. Once you see the ClassCastException, you have to search through the codebase looking for the method invocation that put the coin into the stamp collection
+
+**you lose type safety if you use a raw type such as List, but not if you use a parameterized type such as List<Object>.**
+
+ a few minor exceptions to the rule that you should not use raw types: 
+
+**You must use raw types in class literals.**
+
+ List.class, String[].class, and int.class
+
+wildcard type `Set<?>`
+
+using raw types can lead to exceptions at runtime, so don’t use them
+
+| Term                    | Example                            | Item                                                         |
+| ----------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| Parameterized type      | `List<String>`                     | [Item-26](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-26-Do-not-use-raw-types.md) |
+| Actual type parameter   | `String`                           | [Item-26](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-26-Do-not-use-raw-types.md) |
+| Generic type            | `List<E>`                          | [Item-26](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-26-Do-not-use-raw-types.md), [Item-29](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-29-Favor-generic-types.md) |
+| Formal type parameter   | `E`                                | [Item-26](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-26-Do-not-use-raw-types.md) |
+| Unbounded wildcard type | `List<?>`                          | [Item-26](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-26-Do-not-use-raw-types.md) |
+| Raw type                | `List`                             | [Item-26](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-26-Do-not-use-raw-types.md) |
+| Bounded type parameter  | `<E extends Number>`               | [Item-29](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-29-Favor-generic-types.md) |
+| Recursive type bound    | `<T extends Comparable<T>>`        | [Item-30](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-30-Favor-generic-methods.md) |
+| Bounded wildcard type   | `List<? extends Number>`           | [Item-31](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-31-Use-bounded-wildcards-to-increase-API-flexibility.md) |
+| Generic method          | `static <E> List<E> asList(E[] a)` | [Item-30](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-30-Favor-generic-methods.md) |
+| Type token              | `String.class`                     | [Item-33](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-33-Consider-typesafe-heterogeneous-containers.md) |
+
