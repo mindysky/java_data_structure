@@ -51,5 +51,12 @@
 35. completely forget something
 36. as you see, I am far too busy to ....
 37. indeed, 
+38. It means that you won’t get a ClassCastException at runtime, and it increases your confidence that your program will behave as you intended.
+39. Record the rationale for your decision to suppress the warning in a comment.
+40. what kind of contribution can I make?
+41. Are you familar with this phase?
+42. Might I join you?
+43. Pride goes before a fall.
+44. 
 
   

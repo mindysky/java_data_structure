@@ -401,3 +401,159 @@ using raw types can lead to exceptions at runtime, so don’t use them
 | Generic method          | `static <E> List<E> asList(E[] a)` | [Item-30](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-30-Favor-generic-methods.md) |
 | Type token              | `String.class`                     | [Item-33](https://github.com/clxering/Effective-Java-3rd-edition-Chinese-English-bilingual/blob/dev/Chapter-5/Chapter-5-Item-33-Consider-typesafe-heterogeneous-containers.md) |
 
+### Item 27: Eliminate unchecked warnings（消除 unchecked 警告）
+
+unchecked cast warnings, 
+
+unchecked method invocation warnings, 
+
+unchecked parameterized vararg type warnings, 
+
+and unchecked conversion warnings
+
+```java
+Set<Lark> exaltation = new HashSet();
+
+Venery.java:4: warning: [unchecked] unchecked conversion
+Set<Lark> exaltation = new HashSet();
+^ required: Set<Lark>
+found: HashSet
+
+
+diamond operator  (<>)
+Set<Lark> exaltation = new HashSet<>();
+
+```
+
+**Eliminate every unchecked warning that you can**
+
+**If you can’t eliminate a warning, but you can prove that the code that provoked the warning is typesafe, then (and only then) suppress the warning with an @SuppressWarnings("unchecked") annotation.**
+
+ **Always use the SuppressWarnings annotation on the smallest scope possible.**
+
+```java
+public <T> T[] toArray(T[] a) {
+    if (a.length < size)
+        return (T[]) Arrays.copyOf(elements, size, a.getClass());
+    System.arraycopy(elements, 0, a, 0, size);
+    if (a.length > size)
+        a[size] = null;
+    return a;
+}
+
+ArrayList.java:305: warning: [unchecked] unchecked cast
+return (T[]) Arrays.copyOf(elements, size, a.getClass());
+^ required: T[]
+found: Object[]
+
+
+// Adding local variable to reduce scope of @SuppressWarnings
+public <T> T[] toArray(T[] a) {
+    if (a.length < size) {
+        // This cast is correct because the array we're creating
+        // is of the same type as the one passed in, which is T[].
+        @SuppressWarnings("unchecked") T[] result = (T[]) Arrays.copyOf(elements, size, a.getClass());
+        return result;
+    }
+    System.arraycopy(elements, 0, a, 0, size);
+    if (a.length > size)
+        a[size] = null;
+    return a;
+}
+
+```
+
+**Every time you use a @SuppressWarnings("unchecked") annotation, add a comment saying why it is safe to do so.** 
+
+### Item 28: Prefer lists to arrays（list 优于数组）
+
+1. arrays are covariant  
+
+   ```java
+   // Fails at runtime!
+   Object[] objectArray = new Long[1];
+   objectArray[0] = "I don't fit in"; // Throws ArrayStoreException
+   
+   // Won't compile!
+   List<Object> ol = new ArrayList<Long>(); // Incompatible types
+   ol.add("I don't fit in");
+   
+   //with an array you find out that you’ve made a mistake at runtime; with a list, you find out at compile time
+   ```
+
+2. arrays are reified  
+
+   ```java
+   ```
+
+   
+
+   ```java
+   / Chooser - a class badly in need of generics!
+   public class Chooser {
+     private final Object[] choiceArray;
+   
+     public Chooser(Collection choices) {
+       choiceArray = choices.toArray();
+   }
+   
+     public Object choose() {
+       Random rnd = ThreadLocalRandom.current();
+       return choiceArray[rnd.nextInt(choiceArray.length)];
+     }
+   }
+   
+   
+   // A first cut at making Chooser generic - won't compile
+   public class Chooser<T> {
+     private final T[] choiceArray;
+   
+     public Chooser(Collection<T> choices) {
+       choiceArray = choices.toArray();
+     }
+   
+     // choose method unchanged
+   }
+   
+   Chooser.java:9: error: incompatible types: Object[] cannot be converted to T[]
+   choiceArray = choices.toArray();
+   ^ where T is a type-variable:
+   T extends Object declared in class Chooser
+       
+   
+   // List-based Chooser - typesafe
+   public class Chooser<T> {
+       private final List<T> choiceList;
+   
+       public Chooser(Collection<T> choices) {
+           choiceList = new ArrayList<>(choices);
+       }
+   
+       public T choose() {
+           Random rnd = ThreadLocalRandom.current();
+           return choiceList.get(rnd.nextInt(choiceList.size()));
+       }
+   } 
+       
+   ```
+
+   
+
+In summary, arrays and generics have very different type rules. Arrays are covariant and reified; generics are invariant and erased. As a consequence, arrays provide runtime type safety but not compile-time type safety, and vice versa for generics. 
+
+If you find yourself mixing them and getting compile-time errors or warnings, your first impulse should be to replace the arrays with lists.
+
+### Item 29: Favor generic types（优先使用泛型）
+
+In summary, generic types are safer and easier to use than types that require casts in client code. When you design new types, make sure that they can be used without such casts.
+
+### Item 30: Favor generic methods（优先使用泛型方法）
+
+### Item 31: Use bounded wildcards to increase API flexibility（使用有界通配符增加 API 的灵活性）
+
+
+
+### Item 32: Combine generics and varargs judiciously（明智地合用泛型和可变参数）
+
+### Item 33: Consider typesafe heterogeneous containers（考虑类型安全的异构容器）
+
