@@ -1,5 +1,15 @@
 ## Java  Basic
 
+JDK（java development kit）
+
+JRE (java runtime environment)
+
+JVM(java virtual machine)
+
+JDK = JRE + JVM+ ....
+
+
+
 #### Collection
 
 - 向Collection接口的实现类的对象中添加数据obj时， 要求obj所在类要重写equals
@@ -467,6 +477,8 @@ Stream.of(1,2,3,4)
 本质是一个对象
 
 
+
+##### Exception
 
 ```
 printStackTrace()方法的意思是：在命令行打印异常信息在程序中出错的位置及原因

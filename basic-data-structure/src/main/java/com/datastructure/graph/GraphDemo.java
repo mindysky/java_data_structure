@@ -4,6 +4,7 @@ import com.sun.corba.se.impl.orbutil.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 public class GraphDemo {
     private ArrayList<String> vertexList; //存储顶点集合
@@ -97,8 +98,45 @@ public class GraphDemo {
 
 
     //对一个节点进行广度优先遍历
-    private 
+    private void bfs(boolean[] isVisited, int i) {
+        int u;  //表示队列的头节点对应下标
+        int w;  //邻接节点w
+        //队列，记录结点访问的顺序
+        LinkedList<Object> linkedList = new LinkedList<>();
+        //访问节点， 输出结点信息
+        System.out.println(getValueByIndex(i) + "=>");
+        //标记为已访问
+        isVisited[i] = true;
+        linkedList.addLast(i);
 
+        while (!linkedList.isEmpty()) {
+            //取出队列的头节点下标
+            u = (Integer) linkedList.removeFirst();
+            //得到第一个邻接点的下标w
+            w = getFirstNeighbor(u);
+            while (w != -1) {
+                //是否访问过
+                if (!isVisited[w]) {
+                    System.out.println(getValueByIndex(i) + "=>");
+                    //标记已经访问
+                    isVisited[w] = true;
+                    //入队
+                    linkedList.addLast(w);
+                }
+                //以u为前驱点，找w后面的下一个邻接点
+                w = getNextNeighbor(u, w); //体现出我们的广度优先
+            }
+        }
+    }
+
+    //遍历所有的结点，都进行广度优先搜索
+    public void bsf() {
+        for (int i = 0; i < getNumOfVertex(); i++) {
+            if (!isVisited[i]) {
+                bfs(isVisited, i);
+            }
+        }
+    }
 
 
     public int getNumOfVertex() {
