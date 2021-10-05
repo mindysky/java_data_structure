@@ -1,2 +1,4 @@
-package com.datastructure.algorithm;public class KnightTravel {
+package com.datastructure.algorithm;
+
+public class KnightTravel {
 }
