@@ -1,5 +1,11 @@
 # Java Design Pattern
 
+设计原则的核心思想：
+
+1. 找出应用中可能需要变化之处，把它们独立出来，不要和那些不需要变化的代码混在一起。
+2. 针对接口编程，而不是针对实现编程
+3. 为了交互对象之间的松耦合设计而努力
+
 #### FAQ
 
 1. 请使用UML类图画出原型模式核心角色
@@ -98,35 +104,253 @@
 
 #### 7. 合成复用原则
 
+- 尽量使用合成/聚合的方式，而不是使用继承
 
+#### 8. UML类图
 
-#### 设计模式分类
+unified modeling language
+
+rational rose
+
+-  依赖关系dependency： 只要在类中用到了对方，那么他们之间就存在依赖关系
+  - 类中用到对方
+  - 如果是类的成员属性
+  - 如果是方法的返回类型
+  - 是方法的接收类型
+  - 方法中使用到
+- 泛化generalization： 实际是继承关系，是依赖关系的特例
+  - 泛化关系就是继承关系
+- 实现关系implementation: 实现关系实际上就是A类实现B类，也是依赖关系的特例
+- 关联关系association : 关联关系实际上就是类与类之间的联系，他是依赖关系的特例
+  - 关系具有导航性： 即双向关系或单向关系
+  - 关系具有多重性： 如1表一有且有一个，0..表示0个或多个
+- 聚合关系aggregation:  聚合关系表示的是整体和部分的关系，整体和部分都可以分开。聚合关系时关联关系的特例，具有关联的导航性和多重性。
+- 组合关系Composition: 如果整体和部分不能分开，就升级为组合关系
+  - 如果一个类定义了对另一个类的级联删除，那他们就是组合关系
+
+#### 设计模式
+
+设计模式的本质是提高软件的维护性，通用性和扩展性，并降低软件的复杂性。
+
+##### 创建型模式：
 
 1. 单例模式
-2. 简单工程模式
-3. 工厂方法模式
-4. 抽象工厂模式
-5. 原型模式
-6. 建造者模式
-7. 适配器模式
+
+   - 采取一定方法保证整个软件系统中，对某个类只能存在一个对象实例，并且该类只提供一个取得其对象实例的方法（静态方法）
+
+   - 如Hibernate的SessionFactory，它充当数据存储源的代理，并负责创建Session对象。SessionFactory并不是轻量级的，一般情况下，一个项目通常只需要一个SessionFactory，就会用到单例模式。
+
+   - 想实例化一个单例类，必须记住使用相应的获取对象的方法，而不是使用new
+
+   - 单例模式使用场景： 需要频繁的进行创建和销毁的对象，创建对象时耗时过多或耗费资源过多（即重量级对象），但又经常用到的对象，工具类对象，频繁访问数据库或文件的对象(如：数据源，session工厂等)
+
+   - 单例的八种方式
+
+     1. 饿汉式（静态常量）
+
+        ```java
+        class SingleTon{
+            //1.private consturctor, disable new instance
+        	private SingleTon(){}
+            //2.create instance
+            private final static SingleTon instance = new SingleTon();
+            //3.static factory method
+            public static SingleTOn getInstance(){
+                return instance;
+            }
+        }
+        //优点：写法简单，在类装载时就完成实例化，避免了线程同步问题。
+        //缺点：在类装载时就完成实例化，没有达到Lazy Loading的效果。如果从未使用过这个实例，则会造成内存浪费。
+        //这种方式基于classloader机制避免了多线程同步问题
+        //结论： 可能会造成内存浪费，确定会用到该实例时使用
+        ```
+
+     2. 饿汉式（静态代码块）
+
+        ```java
+        class SingleTon{
+            //1.init instance
+            private static SingleTon instance;
+            //2.create instance in static block
+            static{
+                instance = new SingleTon();
+            }
+         	//3.private consturctor, disable new instance
+        	private SingleTon(){}
+            //4.static factory method
+            public static SingleTOn getInstance(){
+                return instance;
+            }
+        }
+        //这种方式和第一种类似，只是将类的实例化放到了静态代码块中，也是在类装载时初始化实例，优缺点与第一种相同。
+        ```
+
+     3. 懒汉式（线程不安全）
+
+        ```java
+        class SingleTon{
+            //1.init instance
+            private static SingleTon singleton;
+            //2.private consturctor, disable new instance
+        	private SingleTon(){}
+         
+            //3.static factory method, create instance when invocate getInstance
+            public static SingleTOn getInstance(){
+                if(singleton==null){
+                    singleton = new SingleTon()； 
+                }
+                return singleton;
+            }
+        }
+        //能起到Lazy Loading的效果，但只能单线程使用
+        //如在多线程中，一个线程进入if语句，还未来得及执行，另一个线程也通过了该判断语句，这时会产生多个实例，在实际多线程环境下不可以使用这种方式
+        //结论: 在实际开发中不要使用
+        ```
+
+        
+
+     4. 懒汉式（线程安全，同步方法）
+
+        ```java
+        class SingleTon{
+            //1.init instance
+            private static SingleTon singleton;
+            //2.private consturctor, disable new instance
+        	private SingleTon(){}
+         
+            //3.static factory method, create instance when invocate getInstance
+            //add sychronized
+            public static sychronized SingleTOn getInstance(){
+                if(singleton==null){
+                    singleton = new SingleTon()； 
+                }
+                return singleton;
+            }
+        }
+        //解决了线程不安全问题，但是效率太低，每个线程想获取实例的时候，执行getInstance方法都要进行同步，而这个方法其实只执行一次就够了
+        //结论: 在实际开发中不推荐使用
+        ```
+
+     5. 懒汉式（线程安全，同步代码块）
+
+        ```java
+        class SingleTon{
+            //1.init instance
+            private static SingleTon singleton;
+           
+            //2.private consturctor, disable new instance
+        	private SingleTon(){}
+         
+            //3.static factory method, create instance when invocate getInstance
+            //add sychronized
+            public static SingleTOn getInstance(){
+                if(singleton==null){
+                    sychronized(Singleton.class){
+                         singleton = new SingleTon()； 
+                    }
+                }
+                return singleton;
+            }
+        }
+        //未解决了线程安全问题
+        //结论: 在实际开发中不能使用
+        ```
+
+     6. 双重检查
+
+        ```java
+        class SingleTon{
+            //1.init instance
+            //volatile 可以及时更新到主程，轻量的sychronized
+            private static volatile SingleTon singleton;
+            //2.private consturctor, disable new instance
+        	private SingleTon(){}
+         
+            //3.static factory method, create instance when invocate getInstance
+            public static sychronized SingleTOn getInstance(){
+                if(singleton==null){
+                     sychronized(Singleton.class){
+                         if(singleton==null){
+                             singleton = new SingleTon()； 
+                         }
+                    } 
+                }
+                return singleton;
+            }
+        }
+        //能解决线程安全问题，也能解决效率问题
+        //结论: 在实际开发中推荐使用
+        ```
+
+     7. 静态内部类
+
+        ```java
+        class SingleTon{
+            //1.private consturctor, disable new instance
+        	private SingleTon(){}
+            //2.init instance
+            private static class SingletonInstance{
+                //特点：外部类进行类装载时静态内部类不会装载
+                //用到内部类时静态内部类才装载，只装载一次，线程安全
+                private static final Singleton INSTANCE = new Singleton();
+            }
+            //3.static factory method，直接返回成员类
+            public static sychronized SingleTOn getInstance(){
+                return SingletonInstance.INSTANCE;
+            }
+        }
+        //采用了类装载的机制来保证初始化时只有一个线程
+        //类的静态属性只会在第一次加载类的时候初始化，在类初始化时，别的线程无法进入，JVM帮我们保证了线程安全
+        //能起到Lazy Loading的效果，也能保证线程安全，效率高
+        //结论: 在实际开发中推荐使用
+        ```
+
+     8. 枚举
+
+        ```java
+        enum SingleTon{
+            INSTANCE;
+        	public void method(){}
+        }
+        //借助JDK1.5中添加的枚举来实现单例模式，不仅能避免多线程同步问题，而且还能防止反序列化重新创建新的对象。
+        //能起到Lazy Loading的效果，也能保证线程安全，效率高
+        //结论: 在实际开发中推荐使用
+        ```
+
+        
+
+2. 抽象工厂模式
+
+3. 工厂模式
+
+4. 原型模式
+
+5. 建造者模式
+
+##### 结构性模式
+
+1. 适配器模式
    - 类适配器
    - 对象适配器
    - 接口适配器
-8. 桥接模式
-9. 装饰者模式
-10. 组合模式
-11. 外观模式
-12. 亨元模式
-13. 代理模式
-14. 模板模式
-15. 命令模式
-16. 访问者模式
-17. 迭代器模式
-18. 观察者模式
-19. 中介者模式
-20. 备忘录模式
-21. 解释器模式
-22. 状态模式
-23. 策略模式
-24. 职责链模式
+2. 桥接模式
+3. 装饰者模式
+4. 组合模式
+5. 外观模式
+6. 享元模式
+7. 代理模式
+
+##### 行为型模式
+
+1. 模板方法模式
+2. 命令模式
+3. 访问者模式
+4. 迭代器模式
+5. 观察者模式
+6. 中介者模式
+7. 备忘录模式
+8. 解释器模式（Interpreter模式）
+9. 状态模式
+10. 策略模式
+11. 职责链模式（责任链模式）
 
