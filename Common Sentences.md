@@ -60,6 +60,10 @@
 44. please can you review and advise.
 45. perform a few checks to see ......
 46. found a couple of observations
-47. 
+47. where were you?    
+48. do you smell that?
+49. what do we do on sunday?
+50. you are leaving?
+51. 
 
   
