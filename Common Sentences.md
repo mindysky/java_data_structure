@@ -64,6 +64,7 @@
 48. do you smell that?
 49. what do we do on sunday?
 50. you are leaving?
-51. 
+51. a,e,i,o,u当单个字母或单词发音以元音开头
+52. let's do it sooner rather than later
 
   

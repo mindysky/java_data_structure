@@ -1,4 +1,5 @@
-package com.min.factory.factorymethod.pizzastore.pizza;
+package com.min.factory.absfactory.pizzastore.pizza;
+import com.min.factory.absfactory.pizzastore.pizza.Pizza;
 
 public class BJCheesePizza extends Pizza {
     @Override

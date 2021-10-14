@@ -1,8 +1,9 @@
 package com.min.factory.factorymethod.pizzastore.pizza;
 
-public class BJCheesePizza extends Pizza {
+public class LDCheesePizza extends Pizza {
     @Override
     public void prepare() {
-        System.out.println("bj cheese pizza");
+        setName("ld cheese");
+        System.out.println("LD cheese pizza");
     }
 }

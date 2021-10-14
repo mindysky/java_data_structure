@@ -1,6 +1,8 @@
-package com.min.factory.factorymethod.pizzastore.pizza;
+package com.min.factory.absfactory.pizzastore.pizza;
 
-public class BJPepperPizza extends Pizza{
+import com.min.factory.absfactory.pizzastore.pizza.Pizza;
+
+public class BJPepperPizza extends Pizza {
     @Override
     public void prepare() {
         setName("bj pepper");

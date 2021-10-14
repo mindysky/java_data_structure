@@ -23,5 +23,11 @@
 
 本次环境搭建需要三台centos服务器（一主二从）， 然后在每台服务器中分别安装docker(18.06.03),
 
-kubeadm(1.17.4)、kubelet()
+kubeadm(1.17.4)、kubelet(1.17.4)，kubectl(1.17.4)
+
+
+
+MobaXterm professional 同时连接多个服务器
+
+systemctl start chronyd
 

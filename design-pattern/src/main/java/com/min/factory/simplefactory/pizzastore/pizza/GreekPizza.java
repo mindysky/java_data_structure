@@ -1,8 +1,8 @@
 package com.min.factory.simplefactory.pizzastore.pizza;
 
-public class CheesePizza extends Pizza{
+public class GreekPizza extends Pizza{
     @Override
     public void prepare() {
-        System.out.println("chess pizza ....");
+        System.out.println("greek pizza ....");
     }
 }
