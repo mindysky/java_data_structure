@@ -27,7 +27,7 @@ kubeadm(1.17.4)、kubelet(1.17.4)，kubectl(1.17.4)
 
 
 
-MobaXterm professional 同时连接多个服务器
+MobaXterm professional 同时连接多个服务器 , 可同时运行命令在不同服务器
 
 systemctl start chronyd
 
@@ -67,6 +67,9 @@ RBAC
 2. kubectl create deployment  javedemo  --image= registry    --dr y-run -o yaml  >javademo.yaml
 3. kubectl apply -f  jave-demo.yaml
 4. kubectl scale deployment javedemo --replicas=3   //扩容
+5. kubectl expose deployment javademo --port=8111 --target-port=8111 --type=NodePort    暴露端口
+6. kubectl get svc   查看端口
+7. 
 
 
 
