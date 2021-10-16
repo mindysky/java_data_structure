@@ -31,3 +31,42 @@ MobaXterm professional 同时连接多个服务器
 
 systemctl start chronyd
 
+
+
+搭建集群监控平台
+
+从零搭建高可用集群
+
+在集群环境部署项目
+
+RBAC
+
+### 制作镜像
+
+1. mvn clean package 
+2. add Dockerfile
+3. add to VM 
+4. docker build -t  jave-demo:latest  .       :         //build image
+5. docker images   :  show images
+6. docker run -d -p 8111 jave-demo:latest  -t    :   启动项目
+7. netstat -tunlp | grep 
+8. kill  -9 xxxx
+
+### 上传镜像到镜像服务器
+
+1. 创建命名空间
+2. 创建镜像仓库
+3. 登录镜像服务器  docker login
+4. sudo docker tag  [ImageID]  registry:version   =>   add image version
+5. sudo docker push registry 
+6. sudo docker pull registry  拉取镜像
+
+### 部署镜像
+
+1. kubectl get pods -o wide
+2. kubectl create deployment  javedemo  --image= registry    --dr y-run -o yaml  >javademo.yaml
+3. kubectl apply -f  jave-demo.yaml
+4. kubectl scale deployment javedemo --replicas=3   //扩容
+
+
+

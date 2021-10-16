@@ -1,2 +1,5 @@
-package com.min.adapter.objectadpater;public class Voltage5 {
+package com.min.adapter.objectadpater;
+
+public interface Voltage5 {
+    int output5();
 }
