@@ -549,9 +549,56 @@ In summary, generic types are safer and easier to use than types that require ca
 
 ### Item 30: Favor generic methods（优先使用泛型方法）
 
+```java
+ The type parameter list, which declares the type parameters, goes between a method’s modifiers and its return type.
+// The type parameter list is <E>
+// The return type is Set<E>
+// Generic method
+public static <E> Set<E> union(Set<E> s1, Set<E> s2) {
+    Set<E> result = new HashSet<>(s1);
+    result.addAll(s2);
+    return result;
+}
+     
+```
+
+generic singleton factory:
+
+function objects :   Collections.reverseOrder
+
+collections:   Collections.emptySet
+
+```java
+The type bound <E extends Comparable<E>> may be read as “any type E that can be compared to itself"
+// Using a recursive type bound to express mutual comparability
+public static <E extends Comparable<E>> E max(Collection<E> c);
+```
+
+In summary, generic methods, like generic types, are safer and easier to use than methods requiring their clients to put explicit casts on input parameters and return values.
+
 ### Item 31: Use bounded wildcards to increase API flexibility（使用有界通配符增加 API 的灵活性）
 
+unbounded type parameter: <E>
 
+unbounded wildcard:<?>
+
+bounded wildcard type:  有界通配符类型
+
+Iterable of some subtype of E:   Iterable<? extends E>.
+
+collection of some supertype of E:  Collection<? super E>
+
+For maximum flexibility, use wildcard types on input parameters that represent producers or consumers.
+
+**PECS stands for producer-extends, consumer-super.**
+
+**Do not use bounded wildcard types as return types**
+
+ Comparables are always consumers, so you should generally **use `Comparable<? super T>` in preference to `Comparable<T>`.** The same is true of comparators; therefore, you should generally **use `Comparator<? super T>` in preference to `Comparator<T>`.**
+
+**if a type parameter appears only once in a method declaration, replace it with a wildcard.** 
+
+all comparables and comparators are consumers.
 
 ### Item 32: Combine generics and varargs judiciously（明智地合用泛型和可变参数）
 
