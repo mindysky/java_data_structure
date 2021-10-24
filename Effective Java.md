@@ -602,5 +602,86 @@ all comparables and comparators are consumers.
 
 ### Item 32: Combine generics and varargs judiciously（明智地合用泛型和可变参数）
 
+Heap pollution occurs when a variable of a parameterized type refers to an object that is not of that type
+
+**it is unsafe to store a value in a generic varargs array parameter.**
+
+methods with varargs parameters of generic or parameterized types can be very useful in practice, so the language designers opted to live with this inconsistency
+
+```java
+Arrays.asList(T... a)、
+Collections.addAll(Collection<? super T> c, T... elements)
+EnumSet.of(E first, E... rest)
+```
+
+**the SafeVarargs annotation constitutes a promise by the author of a method that it is typesafe**
+
+Before Java 7 :     @SuppressWarnings("unchecked") 
+
+After Java7:    @SafeVarargs
+
+```java
+static <T> T[] pickTwo(T a, T b, T c) {
+  switch(ThreadLocalRandom.current().nextInt(3)) {
+    case 0: return toArray(a, b);
+    case 1: return toArray(a, c);
+    case 2: return toArray(b, c);
+  }
+  throw new AssertionError(); // Can't get here
+} 
+
+String[] attributes = pickTwo("Good", "Fast", "Cheap");
+
+//ClassCastException  The cast fails, because Object[] is not a subtype of String[]
+```
+
+```
+static <T> List<T> pickTwo(T a, T b, T c) {
+  switch(rnd.nextInt(3)) {
+    case 0: return List.of(a, b);
+    case 1: return List.of(a, c);
+    case 2: return List.of(b, c);
+  }
+  throw new AssertionError();
+}
+
+List<String> attributes = pickTwo("Good", "Fast", "Cheap");
+```
+
+
+
+##### Use @SafeVarargs on every method with a varargs parameter of a generic or parameterized type
+
+带有泛型或参数化类型
+
+1. it doesn’t store anything in the varargs parameter array
+2. it doesn’t make the array (or a clone) visible to untrusted code. If either of these prohibitions is violated, fix it.
+
+```java
+// List as a typesafe alternative to a generic varargs parameter
+static <T> List<T> flatten(List<List<? extends T>> lists) {
+  List<T> result = new ArrayList<>();
+  for (List<? extends T> list : lists)
+    result.addAll(list);
+  return result;
+}
+```
+
+Though generic varargs parameters are not typesafe, they are legal. If you choose to write a method with a generic (or parameterized) varargs parameter, first ensure that the method is typesafe, and then annotate it with @SafeVarargs so it is not unpleasant to use.
+
 ### Item 33: Consider typesafe heterogeneous containers（考虑类型安全的异构容器）
+
+Parameterized  container 
+
+collections:   `Set<E>` and `Map<K,V>`
+
+single-element containers:  `ThreadLocal<T> `    `AtomicReference<T>`
+
+A Set has a single type parameter, representing its element type; a Map has two, representing its key and value types; and so forth.
+
+
+
+
+
+
 

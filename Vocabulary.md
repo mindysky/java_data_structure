@@ -2024,43 +2024,73 @@
 
 778. unary   adj. [数] 一元的
 
-779. 
+779. take the plunge    冒险尝试；采取决定性步骤
 
-780. 
+780. preposition  n. 介词，前置词
 
-781. 
+781. people accross/around/in the world
 
-782. 
+782. on the globle
 
-783. 
+783. pantomime   n. 哑剧；舞剧；手势
 
-784. 
+     vi. 打手势；演哑剧
 
-785. 
+     vt. 打手势；演哑剧
 
-786. 
+784. excursion  n. 偏移；远足；短程旅行；离题；游览，游览团
 
-787. 
+785. outskirts  n. 市郊，郊区
 
-788. 
+786. compulsory  adj. 义务的，强制    n. （花样滑冰、竞技体操等的）规定动作
 
-789. 
+787. unicorn   n. 独角兽；麒麟
 
-790. 
+788. wetsuit   n. 潜水服；防寒泳衣；湿式保暖服
 
-791. 
+789. commission  n. 委员会；佣金；服务费；犯；委任；委任状   vt. 委任；使服役；委托制作
 
-792. 
+790. break the mold  打破窠臼
 
-793. 
+791. kinesthetic  /kinaesthetic    adj. [生理] 动觉的；（肌肉等）运动感觉的
 
-794. 
+792. interact  
 
-795. 
+793. interaction  n. 相互作用，相互影响；交流；[数] 交互作用；互动
 
-796. 
+794. disguised   adj. 伪装的；乔装的；掩饰的
 
-797. 
+     v. 伪装；乔装；掩饰；掩盖（disguise 的过去式和过去分词）
+
+795. disconcerting   adj. 令人不安的；打扰人的
+
+796. err  v. 犯错，出错；作恶，犯罪
+
+797. heterogeneous  adj. 由很多种类组成的，混杂的；各种各样的；（化学）不均一的，多相的；（数学）不纯一的，参差的
+
+798. atomic  adj. 原子的，原子能的；微粒子的
+
+799. arbitrarily  adv. 武断地；反复无常地；专横地
+
+800. entirety  n. 全部，整体
+
+801. 
+
+802. 
+
+803. 
+
+804. 
+
+805. 
+
+806. 
+
+807. 
+
+808. 
+
+809. 
 
 
 
