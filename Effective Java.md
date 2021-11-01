@@ -652,6 +652,19 @@ List<String> attributes = pickTwo("Good", "Fast", "Cheap");
 
 ##### Use @SafeVarargs on every method with a varargs parameter of a generic or parameterized type
 
+```
+// Safe method with a generic varargs parameter
+@SafeVarargs
+static <T> List<T> flatten(List<? extends T>... lists) {
+  List<T> result = new ArrayList<>();
+  for (List<? extends T> list : lists)
+    result.addAll(list);
+  return result;
+}
+```
+
+
+
 带有泛型或参数化类型
 
 1. it doesn’t store anything in the varargs parameter array
@@ -679,9 +692,137 @@ single-element containers:  `ThreadLocal<T> `    `AtomicReference<T>`
 
 A Set has a single type parameter, representing its element type; a Map has two, representing its key and value types; and so forth.
 
+### Item 34: Use enums instead of int constants（用枚举类型代替 int 常量）
+
+Before enum types were added to the language, a common pattern for representing enumerated types was to declare a group of named int constants, one for each member of the type.
+
+Enum pattern: provide nothing in the way of type safety and little in the way of expressive power.
+
+String constants:
+
+int constants: 
+
+##### enum type
+
+instance-controlled  实例受控的类
+
+Enums provide compile-time type safety
+
+constant values are not compiled into the clients as they are in the int enum patterns
+
+```java
+
+public enum Apple { FUJI, PIPPIN, GRANNY_SMITH }
+public enum Orange { NAVEL, TEMPLE, BLOOD }
+```
+
+##### rich enum type
+
+**To associate data with enum constants, declare instance fields and write a constructor that takes the data and stores it in the fields**
+
+Enums are by their nature immutable, so all fields should be final 
+
+```java
+// Enum type with data and behavior
+public enum Planet {
+    MERCURY(3.302e+23, 2.439e6),
+    VENUS (4.869e+24, 6.052e6),
+    EARTH (5.975e+24, 6.378e6),
+    MARS (6.419e+23, 3.393e6),
+    JUPITER(1.899e+27, 7.149e7),
+    SATURN (5.685e+26, 6.027e7),
+    URANUS (8.683e+25, 2.556e7),
+    NEPTUNE(1.024e+26, 2.477e7);
+
+    private final double mass; // In kilograms
+    private final double radius; // In meters
+    private final double surfaceGravity; // In m / s^2
+
+    // Universal gravitational constant in m^3 / kg s^2
+    private static final double G = 6.67300E-11;
+
+    // Constructor
+    Planet(double mass, double radius) {
+        this.mass = mass;
+        this.radius = radius;
+        surfaceGravity = G * mass / (radius * radius);
+    }
+
+    public double mass() { return mass; }
+    public double radius() { return radius; }
+    public double surfaceGravity() { return surfaceGravity; }
+
+    public double surfaceWeight(double mass) {
+        return mass * surfaceGravity; // F = ma
+    }
+}
+```
+
+Constant-specific method implementations特定常量方法实现
+
+```java
+// Enum type with constant-specific method implementations
+public enum Operation {
+    PLUS {public double apply(double x, double y){return x + y;}},
+    MINUS {public double apply(double x, double y){return x - y;}},
+    TIMES {public double apply(double x, double y){return x * y;}},
+    DIVIDE{public double apply(double x, double y){return x / y;}};
+    public abstract double apply(double x, double y);
+}
+```
+
+```java
+// Implementing a fromString method on an enum type
+private static final Map<String, Operation> stringToEnum =Stream.of(values()).collect(toMap(Object::toString, e -> e));
+
+// Returns Operation for string, if any
+public static Optional<Operation> fromString(String symbol) {
+    return Optional.ofNullable(stringToEnum.get(symbol));
+}
+```
+
+the strategy enum pattern
+
+```java
+//strategy enum pattern
+```
 
 
 
+
+
+ A minor performance disadvantage of enums is that there is a space and time cost to load and initialize enum types, but it is unlikely to be noticeable in practice.
+
+**Use enums any time you need a set of constants whose members are known at compile time.** 
+
+**It is not necessary that the set of constants in an enum type stay fixed for all time**
+
+Enums are more readable, safer, and more powerful. Many enums require no explicit constructors or members, but others benefit from associating data with each constant and providing methods whose behavior is affected by this data
+
+### Item 35: Use instance fields instead of ordinals（使用实例字段替代序数）
+
+**Never derive a value associated with an enum from its ordinal; store it in an instance field instead:**
+
+```java
+// Abuse of ordinal to derive an associated value - DON'T DO THIS
+public enum Ensemble {
+    SOLO, DUET, TRIO, QUARTET, QUINTET,SEXTET, SEPTET, OCTET, NONET, DECTET;
+
+    public int numberOfMusicians() { return ordinal() + 1; }
+}
+
+
+
+public enum Ensemble {
+    SOLO(1), DUET(2), TRIO(3), QUARTET(4), QUINTET(5),SEXTET(6), SEPTET(7), OCTET(8), DOUBLE_QUARTET(8),NONET(9), DECTET(10),TRIPLE_QUARTET(12);
+
+    private final int numberOfMusicians;
+
+    Ensemble(int size) { this.numberOfMusicians = size; }
+
+    public int numberOfMusicians() { return numberOfMusicians; }
+}
+```
 
 
 

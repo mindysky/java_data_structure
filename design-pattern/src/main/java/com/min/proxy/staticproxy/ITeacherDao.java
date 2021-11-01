@@ -1,2 +1,5 @@
-package com.min.proxy;public class ITeacherDao {
+package com.min.proxy.staticproxy;
+
+public interface ITeacherDao {
+    void teach();
 }

@@ -8,6 +8,116 @@ JVM(java virtual machine)
 
 JDK = JRE + JVM+ ....
 
+#### Enum and Annotation
+
+- 如何自定义枚举类
+
+  ```java
+  //自定义枚举类
+  class Season{
+      //声明Season对象的属性
+      private final String seasonName;
+      private final String seasonDes;
+      //私有化类的构造器
+      private Season(String seasonName,String seasonDes){
+          this.seasonName= seasonName;
+          this.seasonDes= seasonDes;
+      }
+      
+      public static final Season SPRING = new Season("Spring","Spring des");
+      public static final Season SUMMER = new Season("Summer","Summer des");
+      public static final Season AUTUMN = new Season("Autumn","Autumn des");
+      public static final Season WINTER = new Season("Winter","Winter des");
+      
+      public String getSeasonName(){
+          return this.seasonName;
+      }
+       public String getSeasonDes(){
+          return this.seasonDes;
+      }
+  }
+  ```
+
+- 如何使用关键字enum定义枚举类
+
+  ```java
+  #默认继承自java.lang.Enum类
+  enum Season{
+      SPRING("Spring","Spring des"),
+      SUMMER("Summer","Summer des"),
+      AUTUMN("Autumn","Autumn des"),
+      WINTER("Winter","Winter des");
+      
+      //声明Season对象的属性
+      private final String seasonName;
+      private final String seasonDes;
+      //私有化类的构造器
+      private Season(String seasonName,String seasonDes){
+          this.seasonName= seasonName;
+          this.seasonDes= seasonDes;
+      }
+  }
+  ```
+
+- Enum类的主要方法
+
+  ```java
+  values()    enum常量数组
+  valueOf(String objName)   根据提供的obj Name， 返回obj name 对应的对象   
+  toString()  返回当前枚举常量的名称
+  equals
+  hashCode
+  getDeclaringClass
+  name
+  ordinal
+  compareTo
+  clone
+  ```
+
+- 实现接口的枚举类
+
+  ```java
+  interface info(){
+      void show();
+  }
+  enum Season implements info{
+      SPRING("Spring","Spring des"){
+          @Override
+          pubilic void show(){
+              System.out.println("spring show")
+          }
+      },
+      SUMMER("Summer","Summer des"),
+      AUTUMN("Autumn","Autumn des"),
+      WINTER("Winter","Winter des");
+      
+      //声明Season对象的属性
+      private final String seasonName;
+      private final String seasonDes;
+      //私有化类的构造器
+      private Season(String seasonName,String seasonDes){
+          this.seasonName= seasonName;
+          this.seasonDes= seasonDes;
+      }
+  }
+  ```
+
+###### 特点： 
+
+- 类的对象只有有限个数，确定的。
+  - 星期
+  - 性别
+  - 季节
+  - 支付方式
+  - 线程状态
+  - 订单状态
+
+- 当需要定义一组常量时，强烈建议使用枚举类
+
+- 如果枚举类中只有一个对象，则可以作为单例模式的实现方法
+
+  
+
 
 
 #### Collection
@@ -492,9 +602,14 @@ printStackTrace()方法的意思是：在命令行打印异常信息在程序中
 - 参数化类型  parameterized type  ， 允许我们在创建集合时再指定结合元素的类型。List<String>表明List只能保存字符串类型的对象
 - 
 
-
-
-
+```vbnet
+VO:value object
+PO:persistant object 持久对象
+DTO: data trasfer object
+POJO: plain ordinary java object/pure old java object
+BO/DO: bussiness object/Domain Object
+DAO: data access object
+```
 
 
 

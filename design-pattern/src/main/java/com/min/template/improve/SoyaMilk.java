@@ -1,9 +1,11 @@
-package com.min.template;
+package com.min.template.improve;
 
 public abstract class SoyaMilk {
     final void make(){
         select();
-        addCondiments();
+        if(customWantCondiments()){
+            addCondiments();
+        }
         soak();
         beat();
     };
@@ -17,4 +19,8 @@ public abstract class SoyaMilk {
     void beat(){
         System.out.println("#4 beat ");
     };
+
+    boolean customWantCondiments(){
+        return true;
+    }
 }

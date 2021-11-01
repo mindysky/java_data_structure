@@ -1,4 +1,4 @@
-package com.min.template;
+package com.min.template.improve;
 
 public class Client {
     public static void main(String[] args) {
@@ -7,5 +7,8 @@ public class Client {
 
         BlackBeanSoyaMilk blackBeanSoyaMilk = new BlackBeanSoyaMilk();
         blackBeanSoyaMilk.make();
+
+        PureSoyaMilk pureSoyaMilk = new PureSoyaMilk();
+        pureSoyaMilk.make();
     }
 }

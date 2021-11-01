@@ -1,24 +1,9 @@
 package com.min.template;
 
-public class PenutSoyaMilk extends SoyaMilk{
-
-    @Override
-    void select() {
-
-    }
-
+public class PeanutSoyaMilk extends SoyaMilk {
     @Override
     void addCondiments() {
-
+        System.out.println("add peanut");
     }
 
-    @Override
-    void soak() {
-
-    }
-
-    @Override
-    void beat() {
-
-    }
 }

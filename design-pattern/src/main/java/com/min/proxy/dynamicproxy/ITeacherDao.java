@@ -1,2 +1,5 @@
-package com.min.proxy.dynamicproxy;public interface IteacherDao {
+package com.min.proxy.dynamicproxy;
+
+public interface ITeacherDao {
+    void teach();
 }
