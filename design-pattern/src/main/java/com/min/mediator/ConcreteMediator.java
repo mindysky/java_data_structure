@@ -1,2 +1,4 @@
-package com.min.mediator;public class ConcreteMediator {
+package com.min.mediator;
+
+public class ConcreteMediator {
 }

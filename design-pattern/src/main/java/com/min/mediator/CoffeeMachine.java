@@ -1,2 +1,4 @@
-package com.min.mediator;public class CoffeeMachine {
+package com.min.mediator;
+
+public class CoffeeMachine {
 }

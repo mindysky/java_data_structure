@@ -1,2 +1,4 @@
-package com.min.mediator;public class Curtains {
+package com.min.mediator;
+
+public class Curtains {
 }

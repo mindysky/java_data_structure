@@ -1,2 +1,4 @@
-package com.min.observer;public class Subject {
+package com.min.observer;
+
+public interface Subject {
 }

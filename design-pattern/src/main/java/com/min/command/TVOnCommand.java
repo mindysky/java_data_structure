@@ -1,19 +1,19 @@
 package com.min.command;
 
-public class LightOnCommand implements Command {
-    LightReceiver light;
+public class TVOnCommand implements Command {
+    TVReceiver TV;
 
-    public LightOnCommand(LightReceiver light) {
-        this.light = light;
+    public TVOnCommand(TVReceiver TV) {
+        this.TV = TV;
     }
 
     @Override
     public void execute() {
-        light.on();
+        TV.on();
     }
 
     @Override
     public void undo() {
-        light.off();
+        TV.off();
     }
 }

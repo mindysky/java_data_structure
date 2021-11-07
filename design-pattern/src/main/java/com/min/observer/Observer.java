@@ -1,2 +1,5 @@
-package com.min.observer;public class Observer {
+package com.min.observer;
+
+public interface Observer {
+    void update(float temperature,float pressure, float humidity);
 }

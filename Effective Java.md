@@ -783,14 +783,6 @@ public static Optional<Operation> fromString(String symbol) {
 
 the strategy enum pattern
 
-```java
-//strategy enum pattern
-```
-
-
-
-
-
  A minor performance disadvantage of enums is that there is a space and time cost to load and initialize enum types, but it is unlikely to be noticeable in practice.
 
 **Use enums any time you need a set of constants whose members are known at compile time.** 
@@ -824,5 +816,176 @@ public enum Ensemble {
 }
 ```
 
+### Item 36: Use EnumSet instead of bit fields（用 EnumSet 替代位字段）
+
+bit fields：
+
+disadvantages :
+
+have all the disadvantages of int enum constants and more
+
+It is even harder to interpret a bit field than a simple int enum constant when it is printed as a number
+
+no easy way to iterate over all of the elements represented by a bit field
+
+```java
+// Bit field enumeration constants - OBSOLETE!
+public class Text {
+    public static final int STYLE_BOLD = 1 << 0; // 1
+    public static final int STYLE_ITALIC = 1 << 1; // 2
+    public static final int STYLE_UNDERLINE = 1 << 2; // 4
+    public static final int STYLE_STRIKETHROUGH = 1 << 3; // 8
+    // Parameter is bitwise OR of zero or more STYLE_ constants
+    public void applyStyles(int styles) { ... }
+}
 
 
+text.applyStyles(STYLE_BOLD | STYLE_ITALIC);
+```
+
+
+
+EnumSet class:  
+
+This class implements the Set interface, providing all of the richness, type safety, and interoperability you get with any other Set implementation
+
+```java
+// EnumSet - a modern replacement for bit fields
+public class Text {
+    public enum Style { BOLD, ITALIC, UNDERLINE, STRIKETHROUGH }
+    // Any Set could be passed in, but EnumSet is clearly best
+    public void applyStyles(Set<Style> styles) { ... }
+}
+//The EnumSet class provides a rich set of static factories for easy set creation, one of which is illustrated in this code:
+text.applyStyles(EnumSet.of(Style.BOLD, Style.ITALIC));
+```
+
+This allows for the possibility of an unusual client to pass in some other Set implementation.
+
+ **just because an enumerated type will be used in sets, there is no reason to represent it with bit fields.**
+
+disadvantage of EnumSet:    not possible to create an immutable EnumSet
+
+wrap an EnumSet with Collections.unmodifiableSet
+
+### Item 37: Use EnumMap instead of ordinal indexing（使用 EnumMap 替换序数索引）
+
+
+
+
+
+java.util.EnumMap
+
+```java
+// Using an EnumMap to associate data with an enum
+Map<Plant.LifeCycle, Set<Plant>> plantsByLifeCycle =new EnumMap<>(Plant.LifeCycle.class);
+
+for (Plant.LifeCycle lc : Plant.LifeCycle.values())
+    plantsByLifeCycle.put(lc, new HashSet<>());
+
+for (Plant p : garden)
+    plantsByLifeCycle.get(p.lifeCycle).add(p);
+
+System.out.println(plantsByLifeCycle);
+
+// Using a stream and an EnumMap to associate data with an enum
+System.out.println(
+    Arrays.stream(garden).collect(groupingBy(p -> p.lifeCycle,() -> new EnumMap<>(LifeCycle.class), toSet()))
+)
+
+
+// Naive stream-based approach - unlikely to produce an EnumMap!
+System.out.println(Arrays.stream(garden).collect(groupingBy(p -> p.lifeCycle)));
+```
+
+The reason that EnumMap is comparable in speed to an ordinal-indexed array is that EnumMap uses such an array internally, but it hides this implementation detail from the programmer, combining the richness and type safety of a Map with the speed of an array.
+
+
+
+ordinal indexing:
+
+the compiler has no way of knowing the relationship between ordinals and array indices
+
+If you make a mistake in the transition table or forget to update it when you modify the Phase or Phase.Transition enum type, your program will fail at runtime. 
+
+ArrayIndexOutOfBoundsException, a NullPointerException, or (worse) silent erroneous behavior
+
+ the size of the table is quadratic in the number of phases, even if the number of non-null entries is smaller.
+
+```
+// Using ordinal() to index array of arrays - DON'T DO THIS!
+public enum Phase {
+    SOLID, LIQUID, GAS;
+
+    public enum Transition {
+        MELT, FREEZE, BOIL, CONDENSE, SUBLIME, DEPOSIT;
+
+        // Rows indexed by from-ordinal, cols by to-ordinal
+        private static final Transition[][] TRANSITIONS = {
+            { null, MELT, SUBLIME },
+            { FREEZE, null, BOIL },
+            { DEPOSIT, CONDENSE, null }
+        };
+
+        // Returns the phase transition from one phase to another
+        public static Transition from(Phase from, Phase to) {
+            return TRANSITIONS[from.ordinal()][to.ordinal()];
+        }
+    }
+}
+```
+
+
+
+```java
+// Using a nested EnumMap to associate data with enum pairs
+public enum Phase {
+    SOLID, LIQUID, GAS;
+
+    public enum Transition {
+        MELT(SOLID, LIQUID), FREEZE(LIQUID, SOLID),
+        BOIL(LIQUID, GAS), CONDENSE(GAS, LIQUID),
+        SUBLIME(SOLID, GAS), DEPOSIT(GAS, SOLID);
+        private final Phase from;
+        private final Phase to;
+
+        Transition(Phase from, Phase to) {
+            this.from = from;
+            this.to = to;
+        }
+
+        // Initialize the phase transition map
+        private static final Map<Phase_new, Map<Phase_new, Transition>> m = Stream.of(values())
+                .collect(groupingBy(
+                        t -> t.from,
+                        () -> new EnumMap<>(Phase_new.class),
+                        toMap(t -> t.to, t -> t, (x, y) -> y, () -> new EnumMap<>(Phase_new.class))
+                        )
+                );
+
+        public static Transition from(Phase from, Phase to) {
+            return m.get(from).get(to);
+        }
+    }
+}
+
+
+// Initialize the phase transition map
+private static final Map<Phase, Map<Phase,Transition> m =
+    new EnumMap<Phase, Map<Phase ,Transition>>(Phase.class);
+
+    static{
+        for (Phase p : Phase. values())
+            m.put(p,new EnumMap<Phase,Transition (Phase.class));
+        for (Transition trans : Transition.values() )
+            m.get(trans. src).put(trans.dst, trans) ;
+    }
+
+public static Transition from(Phase src, Phase dst) {
+    return m.get(src).get(dst);
+}
+```
+
+In summary, **it is rarely appropriate to use ordinals to index into arrays: use EnumMap instead.** 
+
+If the relationship you are representing is multidimensional, use `EnumMap<..., EnumMap<...>>`. 

@@ -1,2 +1,12 @@
-package com.min.iterator;public interface College {
+package com.min.iterator;
+
+import java.util.Iterator;
+
+public interface College {
+
+    public String getName();
+
+    public void addDepartment(String name, String desc);
+
+    public Iterator createIterotor();
 }
