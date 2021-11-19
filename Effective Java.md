@@ -49,6 +49,7 @@ client will be able to modify th contents of the array,  security holes, 2 ways 
    ```java
    private static final Thing[] PRIVATE = {....}
    public static final List<Thing> VALUSES  = Collections.unmodifiableList(Arrays.asList(PRIVATE ))
+   ```
 
 2. make the array private and add a public mehod that return a copy of a private array:
 
@@ -484,10 +485,12 @@ public <T> T[] toArray(T[] a) {
 2. arrays are reified  
 
    ```java
+   
    ```
-
+```
    
 
+   
    ```java
    / Chooser - a class badly in need of generics!
    public class Chooser {
@@ -535,7 +538,7 @@ public <T> T[] toArray(T[] a) {
        }
    } 
        
-   ```
+```
 
    
 
@@ -870,10 +873,6 @@ wrap an EnumSet with Collections.unmodifiableSet
 
 ### Item 37: Use EnumMap instead of ordinal indexing（使用 EnumMap 替换序数索引）
 
-
-
-
-
 java.util.EnumMap
 
 ```java
@@ -989,3 +988,231 @@ public static Transition from(Phase src, Phase dst) {
 In summary, **it is rarely appropriate to use ordinals to index into arrays: use EnumMap instead.** 
 
 If the relationship you are representing is multidimensional, use `EnumMap<..., EnumMap<...>>`. 
+
+### Item 38: Emulate extensible enums with interfaces（使用接口模拟可扩展枚举）
+
+```java
+// Emulated extensible enum using an interface
+public interface Operation {
+    double apply(double x, double y);
+}
+
+public enum BasicOperation implements Operation {
+    PLUS("+") {
+        public double apply(double x, double y) { return x + y; }
+    },
+    MINUS("-") {
+        public double apply(double x, double y) { return x - y; }
+    },
+    TIMES("*") {
+        public double apply(double x, double y) { return x * y; }
+    },
+    DIVIDE("/") {
+        public double apply(double x, double y) { return x / y; }
+    };
+
+    private final String symbol;
+
+    BasicOperation(String symbol) {
+        this.symbol = symbol;
+    }
+
+    @Override
+    public String toString() {
+        return symbol;
+    }
+}
+
+// Emulated extension enum
+public enum ExtendedOperation implements Operation {
+    EXP("^") {
+        public double apply(double x, double y) {
+            return Math.pow(x, y);
+        }
+    },
+    REMAINDER("%") {
+        public double apply(double x, double y) {
+            return x % y;
+        }
+    };
+
+    private final String symbol;
+
+    ExtendedOperation(String symbol) {
+        this.symbol = symbol;
+    }
+
+    @Override
+    public String toString() {
+        return symbol;
+    }
+}
+```
+
+
+
+### Item 39: Prefer annotations to naming patterns（注解优于命名模式）
+
+naming patterns disadvantage:
+
+1. typographical errors result in silent failures
+2. there is no way to ensure that they are used only on appropriate program elements
+3. they provide no good way to associate parameter values with program elements
+
+Annotations：
+
+```java
+// Marker annotation type declaration
+import java.lang.annotation.*;
+
+/**
+* Indicates that the annotated method is a test method.
+* Use only on parameterless static methods.
+*/
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Test {
+
+}
+```
+
+##### java.lang.annotation.RetentionPolicy:
+
+SOURCE、CLASS 和 RUNTIME
+
+- 使用 SOURCE 保留策略的注解，只在源文件中保留，在编译期间会被抛弃。
+- 使用 CLASS 保留策略的注解，在编译时被存储到 `.class` 文件中。但是，在运行时不能通过 JVM 得到这些注解。
+- 使用 RUNTIME 保留策略的注解，在编译时被存储到 `.class` 文件中，并且在运行时可以通过 JVM 获取这些注解。因此，RUNTIME 保留策略提供了最永久的注解。
+
+##### ElementType:
+
+- ElementType.TYPE
+  - Class, interface (including annotation type), or enum declaration（类、接口、注解、枚举）
+- ElementType.FIELD
+  - Field declaration (includes enum constants)（字段、枚举常量）
+- ElementType.METHOD
+  - Method declaration（方法）
+- ElementType.PARAMETER
+  - Formal parameter declaration（方法参数）
+- ElementType.CONSTRUCTOR
+  - Constructor declaration（构造）
+- ElementType.LOCAL_VARIABLE
+  - Local variable declaration（局部变量）
+- ElementType.ANNOTATION_TYPE
+  - Annotation type declaration（注解）
+- ElementType.PACKAGE
+  - Package declaration（包）
+- ElementType.TYPE_PARAMETER
+  - Type parameter declaration（泛型参数）
+  - Since: 1.8
+- ElementType.TYPE_USE
+  - Use of a type（任意类型，获取 class 对象和 import 两种情况除外）
+  - Since: 1.8
+- ElementType.MODULE
+  - Module declaration（[模块](https://docs.oracle.com/javase/9/whatsnew/toc.htm#JSNEW-GUID-C23AFD78-C777-460B-8ACE-58BE5EA681F6)）
+  - Since: 9
+
+marker annotation:   it has no parameters but simply “marks” the annotated element
+
+```java
+// Program containing marker annotations
+public class Sample {
+    @Test
+    public static void m1() { } // Test should pass
+
+    public static void m2() { }
+
+    @Test
+    public static void m3() { // Test should fail
+        throw new RuntimeException("Boom");
+    }
+
+    public static void m4() { }
+
+    @Test
+    public void m5() { } // INVALID USE: nonstatic method
+
+    public static void m6() { }
+
+    @Test
+    public static void m7() { // Test should fail
+        throw new RuntimeException("Crash");
+    }
+
+    public static void m8() { }
+}
+```
+
+
+
+### Item 40: Consistently use the Override annotation（坚持使用 @Override 注解）
+
+- 执行编译器的检查，例如：`@Override` 注解。
+- 分析代码：主要的用途，用来替代配置文件。
+
+- 用在框架里面，注解开发。
+
+  
+
+##### JDK 内置的三种基本注解
+
+- `@Override` ：限定重写父类方法，该注解只能用于方法。
+
+- `@Deprecated` ：用于表示所修饰的元素（类、方法等）已经过时。通常是因为所修饰的结构危险或存在更好的选择。
+
+- `@SuppressWarnings` ：抑制编译器警告。
+
+
+
+ 没有属性的注解称为 `标记` ，有属性的注解称为 `元数据注解` 。 
+
+
+
+@Override. This annotation can be used only on method declarations, and it indicates that the annotated method declaration overrides a declaration in a supertype.
+
+If you consistently use this annotation, it will protect you from a large class of nefarious bugs. 
+
+```
+@Override
+public boolean equals(Bigram b) {
+    return b.first == first && b.second == second;
+}
+
+Bigram.java:10: method does not override or implement a method from a supertype
+@Override public boolean equals(Bigram b) {
+^
+
+
+@Override
+public boolean equals(Object o) {
+    if (!(o instanceof Bigram))
+        return false;
+    Bigram b = (Bigram) o;
+    return b.first == first && b.second == second;
+}
+```
+
+**use the Override annotation on every method declaration that you believe to override a superclass declaration**
+
+The Override annotation may be used on method declarations that override declarations from interfaces as well as classes
+
+In an abstract class or an interface, however, it is worth annotating all methods that you believe to override superclass or superinterface methods, whether concrete or abstract.
+
+### Item 41: Use marker interfaces to define types（使用标记接口定义类型）
+
+##### marker interface  标记接口
+
+1. an interface that contains no method declarations but merely designates (or “marks”) a class that implements the interface as having some property.
+
+##### marker annotations  标记注解
+
+when should you use a marker annotation 
+
+when should you use a marker interface
+
+Difference : 
+
+1. marker interfaces define a type that is implemented by instances of the marked class; marker annotations do not.
+2. Another advantage of marker interfaces over marker annotations is that they can be targeted more precisely.
+3. The chief advantage of marker annotations over marker interfaces is that they are part of the larger annotation facility
+4. The existence of a marker interface type allows you to catch errors at compile time that you couldn’t catch until runtime if you used a marker annotation.
