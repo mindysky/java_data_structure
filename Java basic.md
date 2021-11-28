@@ -613,5 +613,206 @@ DAO: data access object
 
 
 
+#### Jave NIO
 
+NIO能够高效的实现文件读写
+
+JDK7  add NIO2    based on buffer
+
+在以前的IO操作都是
+
+```java
+File file = new File("index.html")
+```
+
+在Java7中, 可以这样写：
+
+```
+Path path = Paths.get("index.html");
+```
+
+
+
+java.nio.channels.Channel 
+
+- FileChannel: 处理本地文件
+- 
+
+##### IP 地址：InetAddress
+
+ 唯一的标识 Internet 上的计算机（通信实体） 本地回环地址(hostAddress)：127.0.0.1 主机名(hostName)：localhost IP地址分类方式1：IPV4 和 IPV6
+
+ IPV4：4个字节组成，4个0-255。大概42亿，30亿都在北美，亚洲4亿。2011年初已 经用尽。以点分十进制表示，如192.168.0.1 
+
+IPV6：128位（16个字节），写成8个无符号整数，每个整数用四个十六进制位表示， 数之间用冒号（：）分开，如：3ffe:3201:1401:1280:c8ff:fe4d:db39:1984 
+
+IP地址分类方式2：公网地址(万维网使用)和私有地址(局域网使用)。192.168. 开头的就是私有址址，范围即为192.168.0.0--192.168.255.255，专门为组织机 构内部使
+
+
+
+##### 端口号标识正在计算机上运行的进程（程序）
+
+ 不同的进程有不同的端口号 
+
+ 被规定为一个 16 位的整数 0~65535。
+
+ 端口分类： 
+
+​	 公认端口：0~1023。被预先定义的服务通信占用（如：HTTP占用端口 80，FTP占用端口21，Telnet占用端口23） 
+
+​	 注册端口：1024~49151。分配给用户进程或应用程序。（如：Tomcat占 用端口8080，MySQL占用端口3306，Oracle占用端口1521等）。 
+
+​	 动态/私有端口：49152~65535。
+
+##### InetAdress类 
+
+- InetAddress类没有提供公共的构造器，而是提供了如下几个静态方法来获取 InetAddress实例 public static InetAddress getLocalHost() 
+
+  public static InetAddress getByName(String host) 
+
+- InetAddress提供了如下几个常用的方法 
+
+  public String getHostAddress()：返回 IP 地址字符串（以文本表现形式）。 
+
+  public String getHostName()：获取此 IP 地址的主机名 
+
+  public boolean isReachable(int timeout)：测试是否可以达到该地址
+
+  
+
+- 网络通信协议 
+
+  计算机网络中实现通信必须有一些约定，即通信协议，对速率、传输代码、代 码结构、传输控制步骤、出错控制等制定标准。 
+
+- 问题：网络协议太复杂 计算机网络通信涉及内容很多，比如指定源地址和目标地址，加密解密，压缩 解压缩，差错控制，流量控制，路由控制，如何实现如此复杂的网络协议呢？
+
+- 通信协议分层的思想 在制定协议时，把复杂成份分解成一些简单的成份，再将它们复合起来。最常 用的复合方式是层次方式，即同层间可以通信、上一层可以调用下一层，而与 再下一层不发生关系。各层互不影响，利于系统的开发和扩展。
+
+##### TCP/IP协议簇 
+
+- 传输层协议中有两个非常重要的协议： 
+  1. 传输控制协议TCP(Transmission Control Protocol)
+  2.  用户数据报协议UDP(User Datagram Protocol)。 
+
+TCP/IP 以其两个主要协议：传输控制协议(TCP)和网络互联协议(IP)而得 名，实际上是一组协议，包括多个具有不同功能且互为关联的协议。
+
+ IP(Internet Protocol)协议是网络层的主要协议，支持网间互连的数据通信。
+
+ TCP/IP协议模型从更实用的角度出发，形成了高效的四层体系结构，即 物理链路层、IP层、传输层和应用层。
+
+
+
+##### TCP 和 UDP
+
+-  TCP协议：
+
+  - 使用TCP协议前，须先建立TCP连接，形成传输数据通道
+  - 传输前，采用“三次握手”方式，点对点通信，是可靠的
+  - TCP协议进行通信的两个应用进程：客户端、服务端。
+  - 在连接中可进行大数据量的传输
+  - 传输完毕，需释放已建立的连接，效率低
+
+- UDP协议：
+
+  - 将数据、源、目的封装成数据包，不需要建立连接
+  - 每个数据报的大小限制在64K内
+  - 发送不管对方是否准备好，接收方收到也不确认，故是不可靠的
+  - 可以广播发送
+  - 发送数据结束时无需释放资源，开销小，速度快
+
+  #####  Socket
+
+  - 利用套接字(Socket)开发网络应用程序早已被广泛的采用，以至于成为事实 上的标准。
+  - 网络上具有唯一标识的IP地址和端口号组合在一起才能构成唯一能识别的标 识符套接字。
+  - 通信的两端都要有Socket，是两台机器间通信的端点。 
+  - 网络通信其实就是Socket间的通信。
+  - Socket允许程序把网络连接当成一个流，数据在两个Socket间通过IO传输。 
+  - 一般主动发起通信的应用程序属客户端，等待通信请求的为服务端。 
+  - Socket分类： 
+    - 流套接字（stream socket）：使用TCP提供可依赖的字节流服务
+    - 数据报套接字（datagram socket）：使用UDP提供“尽力而为”的数据报服务 S
+
+###### Socket类的常用构造器： 
+
+- public Socket(InetAddress address,int port)创建一个流套接字并将其连接到指定 IP 地址的指定端口号。 
+- public Socket(String host,int port)创建一个流套接字并将其连接到指定主机上的指定端口号。 
+
+###### Socket类的常用方法：
+
+- public InputStream getInputStream()返回此套接字的输入流。可以用于接收网络消息 
+-  public OutputStream getOutputStream()返回此套接字的输出流。可以用于发送网络消息 
+-  public InetAddress getInetAddress()此套接字连接到的远程 IP 地址；如果套接字是未连接的，则返回 null。 
+- public InetAddress getLocalAddress()获取套接字绑定的本地地址。 即本端的IP地址 
+- public int getPort()此套接字连接到的远程端口号；如果尚未连接套接字，则返回 0。
+- public int getLocalPort()返回此套接字绑定到的本地端口。 如果尚未绑定套接字，则返回 -1。即本端的 端口号。 
+- public void close()关闭此套接字。套接字被关闭后，便不可在以后的网络连接中使用（即无法重新连接 或重新绑定）。需要创建新的套接字对象。 关闭此套接字也将会关闭该套接字的 InputStream 和 OutputStream。 
+- public void shutdownInput()如果在套接字上调用 shutdownInput() 后从套接字输入流读取内容，则流将 返回 EOF（文件结束符）。 即不能在从此套接字的输入流中接收任何数据。 
+- public void shutdownOutput()禁用此套接字的输出流。对于 TCP 套接字，任何以前写入的数据都将被发 送，并且后跟 TCP 的正常连接终止序列。 如果在套接字上调用 shutdownOutput() 后写入套接字输出流， 则该流将抛出 IOException。 即不能通过此套接字的输出流发送任何数据。
+
+##### 基于Socket的TCP编程 
+
+###### 客户端Socket的工作过程包含以下四个基本的步骤：
+
+-  创建 Socket：根据指定服务端的 IP 地址或端口号构造 Socket 类对象。若服务器端 响应，则建立客户端到服务器的通信线路。若连接失败，会出现异常。
+-  打开连接到 Socket 的输入/出流： 使用 getInputStream()方法获得输入流，使用 getOutputStream()方法获得输出流，进行数据传输 
+- 按照一定的协议对 Socket 进行读/写操作：通过输入流读取服务器放入线路的信息 （但不能读取自己放入线路的信息），通过输出流将信息写入线程。
+- 关闭 Socket：断开客户端到服务器的连接，释放线路
+
+###### 客户端创建Socket对象 
+
+- 客户端程序可以使用Socket类创建对象，创建的同时会自动向服务器方发起连 接。Socket的构造器是： 
+  - Socket(String host,int port)throws UnknownHostException,IOException：向服务器(域名是 host。端口号为port)发起TCP连接，若成功，则创建Socket对象，否则抛出异常。
+  - Socket(InetAddress address,int port)throws IOException：根据InetAddress对象所表示的 IP地址以及端口号port发起连接
+
+- 客户端建立socketAtClient对象的过程就是向服务器发出套接字连接请求
+
+###### 服务器程序的工作过程包含以下四个基本的步骤： 
+
+- 调用 ServerSocket(int port) ：创建一个服务器端套接字，并绑定到指定端口 上。用于监听客户端的请求。
+- 调用 accept()：监听连接请求，如果客户端请求连接，则接受连接，返回通信 套接字对象。
+- 调用 该Socket类对象的 getOutputStream() 和 getInputStream ()：获取输出 流和输入流，开始网络数据的发送和接收。 
+- 关闭ServerSocket和Socket对象：客户端访问结束，关闭通信套接字。
+
+##### 服务器建立 ServerSocket 对象 
+
+- ServerSocket 对象负责等待客户端请求建立套接字连接，类似邮局某个窗口 中的业务员。也就是说，服务器必须事先建立一个等待客户请求建立套接字 连接的ServerSocket对象。 
+
+- 所谓“接收”客户的套接字请求，就是accept()方法会返回一个 Socket 对象
+
+##### UDP网络通信 
+
+- 类 DatagramSocket 和 DatagramPacket 实现了基于 UDP 协议网络程序。
+- UDP数据报通过数据报套接字 DatagramSocket 发送和接收，系统不保证 UDP数据报一定能够安全送到目的地，也不能确定什么时候可以抵达。 
+- DatagramPacket 对象封装了UDP数据报，在数据报中包含了发送端的IP 地址和端口号以及接收端的IP地址和端口号。
+- UDP协议中每个数据报都给出了完整的地址信息，因此无须建立发送方和 接收方的连接。如同发快递包裹一样。
+
+##### URL类 
+
+- URL(Uniform Resource Locator)：统一资源定位符，它表示 Internet 上某一 资源的地址。 
+- 它是一种具体的URI，即URL可以用来标识一个资源，而且还指明了如何locate 这个资源。
+- 通过 URL 我们可以访问 Internet 上的各种网络资源，比如最常见的 www，ftp  站点。浏览器通过解析给定的 URL 可以在网络上查找相应的文件或其他资源。 
+- URL的基本结构由5部分组成： <传输协议>://<主机名>:<端口号>/<文件名>#片段名?参数列表
+- 为了表示URL，java.net 中实现了类 URL。
+- URL类的构造器都声明抛出非运行时异常，必须要对这一异常进行处理，通 常是用 try-catch 语句进行捕获。
+- 一个URL对象生成后，其属性是不能被改变的，但可以通过它给定的方法来获取这些属性
+
+##### 针对HTTP协议的URLConnection类
+
+- URL的方法 openStream()：能从网络上读取数据
+
+- 若希望输出数据，例如向服务器端的 CGI （公共网关接口-Common Gateway  Interface-的简称，是用户浏览器和服务器端的应用程序进行连接的接口）程序发送一 些数据，则必须先与URL建立连接，然后才能对其进行读写，此时需要使用 URLConnection 。
+
+- URLConnection：表示到URL所引用的远程对象的连接。当与一个URL建立连接时， 首先要在一个 URL 对象上通过方法 openConnection() 生成对应的 URLConnection 对象。如果连接过程失败，将产生IOException.  
+
+  - URL netchinaren = new URL ("http://www.atguigu.com/index.shtml");  
+
+  - URLConnectonn u = netchinaren.openConnection( ); 
+
+- 通过URLConnection对象获取的输入流和输出流，即可以与现有的CGI 程序进行交互。
+
+##### URI、URL和URN的区别
+
+URI，是uniform resource identifier，统一资源标识符，用来唯一的标识一个 资源。而URL是uniform resource locator，统一资源定位符，它是一种具体 的URI，即URL可以用来标识一个资源，而且还指明了如何locate这个资源。 而URN，uniform resource name，统一资源命名，是通过名字来标识资源， 比如mailto:java-net@java.sun.com。也就是说，URI是以一种抽象的，高层 次概念定义统一资源标识，而URL和URN则是具体的资源标识的方式。URL 和URN都是一种URI。
+
+在Java的URI中，一个URI实例可以代表绝对的，也可以是相对的，只要它符 合URI的语法规则。而URL类则 不仅符合语义，还包含了定位该资源的信息， 因此它不能是相对的。
 

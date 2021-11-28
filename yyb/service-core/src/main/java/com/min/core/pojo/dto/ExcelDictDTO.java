@@ -1,7 +1,9 @@
 package com.min.core.pojo.dto;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+import lombok.Data;
 
+@Data
 public class ExcelDictDTO {
     @ExcelProperty("id")
     private Long id;

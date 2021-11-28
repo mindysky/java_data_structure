@@ -1216,3 +1216,75 @@ Difference :
 2. Another advantage of marker interfaces over marker annotations is that they can be targeted more precisely.
 3. The chief advantage of marker annotations over marker interfaces is that they are part of the larger annotation facility
 4. The existence of a marker interface type allows you to catch errors at compile time that you couldn’t catch until runtime if you used a marker annotation.
+
+### Item 42: Prefer lambdas to anonymous classes
+
+lambdas：
+
+the best way to represent small function objects
+
+```java
+// Lambda expression as function object (replaces anonymous class)
+Collections.sort(words,(s1, s2) -> Integer.compare(s1.length(), s2.length()));
+
+//comparator construction method is used in place of a lambda
+Collections.sort(words, comparingInt(String::length));
+// the snippet can be made still shorter by taking advantage of the sort method that was added to the List interface in Java 8:
+words.sort(comparingInt(String::length));
+```
+
+type inference:
+
+**Omit the types of all lambda parameters unless their presence makes your program clearer**
+
+**lambdas lack names and documentation; if a computation isn’t self-explanatory, or exceeds a few lines, don’t put it in a lambda.** 
+
+limitations:
+
+Lambdas are limited to functional interfaces
+
+ a lambda cannot obtain a reference to itself.
+
+**you should rarely, if ever, serialize a lambda**
+
+Anonymous classes：
+
+```java
+// Anonymous class instance as a function object - obsolete!
+Collections.sort(words, new Comparator<String>() {
+    public int compare(String s1, String s2) {
+        return Integer.compare(s1.length(), s2.length());
+    }
+});
+```
+
+**Don’t use anonymous classes for function objects unless you have to create instances of types that aren’t functional interfaces.** 
+
+If you want to create an instance of an abstract class, you can do it with an anonymous class, but not a lambda. 
+
+ you can use anonymous classes to create instances of interfaces with multiple abstract methods
+
+Strategy pattern：
+
+### Item 43: Prefer method references to lambdas
+
+method references:
+
+```java
+//lambdas
+map.merge(key, 1, (count, incr) -> count + incr);
+//method references
+map.merge(key, 1, Integer::sum);
+```
+
+method references usually result in shorter, clearer code
+
+| Method Ref Type   | Example                  | Lambda Equivalent                                  |
+| ----------------- | ------------------------ | -------------------------------------------------- |
+| Static            | `Integer::parseInt`      | `str ->`                                           |
+| Bound             | `Instant.now()::isAfter` | `Instant then =Instant.now(); t ->then.isAfter(t)` |
+| Unbound           | `String::toLowerCase`    | `str ->str.toLowerCase()`                          |
+| Class Constructor | `TreeMap<K,V>::new`      | `() -> new TreeMap<K,V>`                           |
+| Array Constructor | `int[]::new`             | `len -> new int[len]`                              |
+
+**Where method references are shorter and clearer, use them; where they aren’t, stick with lambdas.**

@@ -40,6 +40,7 @@ public class AdminDictController {
             throw new BusinessException(ResponseEnum.UPLOAD_ERROR, e);
         }
     }
+
     @ApiOperation("根据上级id获取子节点数据列表")
     @GetMapping("/listByParentId/{parentId}")
     public R listByParentId(

@@ -35,8 +35,8 @@ import java.util.concurrent.TimeUnit;
 public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements DictService {
     @Resource
     private RedisTemplate<String, List<Dict>> redisTemplate;
-    @Transactional(rollbackFor = {Exception.class})
 
+    @Transactional(rollbackFor = {Exception.class})
     @Override
     public void importData(InputStream inputStream) {
         // 这里 需要指定读用哪个class去读，然后读取第一个sheet 文件流会自动关闭
