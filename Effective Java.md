@@ -1235,6 +1235,9 @@ words.sort(comparingInt(String::length));
 
 type inference:
 
+Type inference is a Java compiler's ability to look at each method invocation and corresponding declaration to determine the type argument (or arguments) that make the invocation applicable. The inference algorithm determines the types of the arguments and, if available, the type that the result is being assigned, or returned. Finally, the inference algorithm tries to find the most specific type that works with all of the arguments.
+
+
 **Omit the types of all lambda parameters unless their presence makes your program clearer**
 
 **lambdas lack names and documentation; if a computation isn’t self-explanatory, or exceeds a few lines, don’t put it in a lambda.** 
@@ -1264,7 +1267,71 @@ If you want to create an instance of an abstract class, you can do it with an an
 
  you can use anonymous classes to create instances of interfaces with multiple abstract methods
 
-Strategy pattern：
+Strategy pattern：策略设计模式
+
+策略方法最重要的是直接调用具体策略实现类中的方法来完成功能
+
+1. 提供一个策略接口
+2. 提供多个策略接口的实现类
+3. 提供一个策略上下文
+
+###### 策略模式优点
+
+- 可以自由切换算法(具体实现)
+- 避免了多条件的判断(干掉了if else)
+- 扩展性好可以定义新的算法提供给使用者(增加新功能时只需要增加代码而不需要修改代码)
+
+###### 策略模式缺点
+
+- 算法类数量增多，每个算法都是一个类，这对于初级程序员比较难以接受
+
+```java
+/**
+ * 计算策略.
+ *
+ */
+public interface CalcStrategy {
+
+    int calc(int num1, int num2);
+}
+
+/**
+ * 加法操作
+ */
+public class AddStrategy implements CalcStrategy {
+    @Override
+    public int calc(int num1, int num2) {
+    	System.out.println("加法运算其它业务逻辑start");
+        System.out.println("此处省略几十行代码...");
+        System.out.println("加法运算其它业务逻辑end");
+        return num1 + num2;
+    }
+}
+
+/**
+ * 减法操作.
+ */
+public class SubStrategy implements CalcStrategy {
+    @Override
+    public int calc(int num1, int num2) {
+        return num1 - num2;
+    }
+}
+
+//增加一个求余数的运算只需要增加一个枚举值并新增一个求余的实现类
+public enum CalcTypeEnum {
+    ADD(1, "加法操作"),
+    SUB(2, "减法操作"),
+    MUL(3, "乘法操作"),
+    DIV(4, "除法操作"),
+    // 求余数运算
+    REM(5, "求余操作"),
+    ;
+}
+
+```
+
+
 
 ### Item 43: Prefer method references to lambdas
 

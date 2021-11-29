@@ -12,8 +12,6 @@
     <artifactId>service-oss</artifactId>
 
     <dependencies>
-
-
         <dependency>
             <groupId>com.min</groupId>
             <artifactId>service-base</artifactId>
