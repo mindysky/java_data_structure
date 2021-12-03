@@ -1267,6 +1267,12 @@ If you want to create an instance of an abstract class, you can do it with an an
 
  you can use anonymous classes to create instances of interfaces with multiple abstract methods
 
+
+
+In a lambda, the this keyword refers to the enclosing instance, which is typically what you want. In an anonymous class, the this keyword refers to the anonymous class instance. If you need access to the function object from within its body, then you must use an anonymous class.
+
+
+
 Strategy pattern：策略设计模式
 
 策略方法最重要的是直接调用具体策略实现类中的方法来完成功能
