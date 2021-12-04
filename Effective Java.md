@@ -1361,3 +1361,41 @@ method references usually result in shorter, clearer code
 | Array Constructor | `int[]::new`             | `len -> new int[len]`                              |
 
 **Where method references are shorter and clearer, use them; where they aren’t, stick with lambdas.**
+
+### Item 44: Favor the use of standard functional interfaces（优先使用标准函数式接口）
+
+```java
+protected boolean removeEldestEntry(Map.Entry<K,V> eldest) {
+    return size() > 100;
+}
+
+// Unnecessary functional interface; use a standard one instead.
+@FunctionalInterface interface EldestEntryRemovalFunction<K,V>{
+    boolean remove(Map<K,V> map, Map.Entry<K,V> eldest);
+}
+```
+
+java.util.function:
+
+| Interface           | Function Signature    | Example               |
+| ------------------- | --------------------- | --------------------- |
+| `UnaryOperator<T>`  | `T apply(T t)`        | `String::toLowerCase` |
+| `BinaryOperator<T>` | `T apply(T t1, T t2)` | `BigInteger::add`     |
+| `Predicate<T>`      | `boolean test(T t)`   | `Collection::isEmpty` |
+| `Function<T,R>`     | `R apply(T t)`        | `Arrays::asList`      |
+| `Supplier<T>`       | `T get()`             | `Instant::now`        |
+| `Consumer<T>`       | `void accept(T t)`    | `System.out::println` |
+
+**don’t be tempted to use basic functional interfaces with boxed primitives instead of primitive functional interfaces.**
+
+writing a purpose-built functional interface:
+
+- It will be commonly used and could benefit from a descriptive name.
+
+- It has a strong contract associated with it.
+
+- It would benefit from custom default methods.
+
+**Always annotate your functional interfaces with the @FunctionalInterface annotation.**
+
+### Item 45: Use streams judiciously（明智地使用流）
