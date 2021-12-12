@@ -1,3 +1,5 @@
+
+
 # Effective Java
 
 ## Item 15 minimize the accessibility of classes and members
@@ -1399,3 +1401,413 @@ writing a purpose-built functional interface:
 **Always annotate your functional interfaces with the @FunctionalInterface annotation.**
 
 ### Item 45: Use streams judiciously（明智地使用流）
+
+A stream pipeline consists of a source stream followed by zero or more intermediate operations and one terminal operation.
+
+Stream pipelines are evaluated lazily:
+
+ when to use streams：
+
+```java
+// Prints all large anagram groups in a dictionary iteratively
+public class Anagrams {
+    public static void main(String[] args) throws IOException {
+        File dictionary = new File(args[0]);
+        int minGroupSize = Integer.parseInt(args[1]);
+        Map<String, Set<String>> groups = new HashMap<>();
+        try (Scanner s = new Scanner(dictionary)) {
+            while (s.hasNext()) {
+                String word = s.next();
+                groups.computeIfAbsent(alphabetize(word),(unused) -> new TreeSet<>()).add(word);
+            }
+        }
+        for (Set<String> group : groups.values())
+        if (group.size() >= minGroupSize)
+            System.out.println(group.size() + ": " + group);
+    }
+
+    private static String alphabetize(String s) {
+        char[] a = s.toCharArray();
+        Arrays.sort(a);
+        return new String(a);
+    }
+}
+
+// Overuse of streams - don't do this!
+public class Anagrams {
+    public static void main(String[] args) throws IOException {
+        Path dictionary = Paths.get(args[0]);
+        int minGroupSize = Integer.parseInt(args[1]);
+        try (Stream<String> words = Files.lines(dictionary)) {
+            words.collect(
+            groupingBy(word -> word.chars().sorted()
+            .collect(StringBuilder::new,(sb, c) -> sb.append((char) c),
+            StringBuilder::append).toString()))
+            .values().stream()
+            .filter(group -> group.size() >= minGroupSize)
+            .map(group -> group.size() + ": " + group)
+            .forEach(System.out::println);
+        }
+    }
+}
+
+
+// Tasteful use of streams enhances clarity and conciseness
+public class Anagrams {
+    public static void main(String[] args) throws IOException {
+        Path dictionary = Paths.get(args[0]);
+        int minGroupSize = Integer.parseInt(args[1]);
+        try (Stream<String> words = Files.lines(dictionary)) {
+            words.collect(groupingBy(word -> alphabetize(word)))
+            .values().stream()
+            .filter(group -> group.size() >= minGroupSize)
+            .forEach(g -> System.out.println(g.size() + ": " + g));
+        }
+    }
+    // alphabetize method is the same as in original version
+    private static String alphabetize(String s) {
+        char[] a = s.toCharArray();
+        Arrays.sort(a);
+        return new String(a);
+    }
+}
+
+```
+
+**In the absence of explicit types, careful naming of lambda parameters is essential to the readability of stream pipelines.**
+
+**Using helper methods is even more important for readability in stream pipelines than in iterative code**
+
+**refactor existing code to use streams and use them in new code only where it makes sense to do so.**
+
+There are some things you can do from code blocks that you can’t do from function objects:
+
+- From a code block, you can read or modify any local variable in scope; from a lambda, you can only read final or effectively final variables [JLS 4.12.4], and you can’t modify any local variables.
+- From a code block, you can return from the enclosing method, break or continue an enclosing loop, or throw any checked exception that this method is declared to throw; from a lambda you can do none of these things.
+
+#####  streams make it very easy to do some things:
+
+- Uniformly transform sequences of elements
+- Filter sequences of elements
+- Combine sequences of elements using a single operation (for example to add them, concatenate them, or compute their minimum)
+- Accumulate sequences of elements into a collection, perhaps grouping them by some common attribute
+- Search a sequence of elements for an element satisfying some criterion
+
+```java
+// Stream-based Cartesian product computation
+private static List<Card> newDeck() {
+    return Stream.of(Suit.values())
+    .flatMap(suit ->Stream.of(Rank.values())
+    .map(rank -> new Card(suit, rank)))
+    .collect(toList());
+}
+
+```
+
+### Item 46: Prefer side-effect-free functions in streams
+
+ A pure function is one whose result depends only on its input: it does not depend on any mutable state, nor does it update any state.
+
+side-effects：unintended *extra* result
+
+The *side* effect is the complement of the *intended* effect.
+
+A [side effect](http://en.wikipedia.org/wiki/Side_effect_(computer_science)) refers simply to the modification of some kind of state - for instance:
+
+- Changing the value of a variable;
+
+- Writing some data to disk;
+
+- Enabling or disabling a button in the User Interface.
+
+  
+
+**1、Intermediate**
+
+- 一个流可以后面跟随零个或多个 intermediate 操作。其目的主要是打开流，做出某种程度的数据映射/过滤，然后返回一个新的流，交给下一个操作使用。这类操作都是惰性化的（lazy），就是说，仅仅调用到这类方法，并没有真正开始流的遍历。常见的操作：map（mapToInt、flatMap 等）、filter、distinct、sorted、peek、limit、skip、parallel、sequential、unordered
+
+**2、Terminal**
+
+- 一个流只能有一个 terminal 操作，当这个操作执行后，流就被使用「光」了，无法再被操作。所以这必定是流的最后一个操作。Terminal 操作的执行，才会真正开始流的遍历，并且会生成一个结果，或者一个 side effect。常见的操作：forEach、forEachOrdered、toArray、reduce、collect、min、max、count、anyMatch、allMatch、noneMatch、findFirst、findAny、iterator
+- 在对于一个流进行多次转换操作 (Intermediate 操作)，每次都对流的每个元素进行转换，而且是执行多次，这样时间复杂度就是 N（转换次数）个 for 循环里把所有操作都做掉的总和吗？其实不是这样的，转换操作都是 lazy 的，多个转换操作只会在 Terminal 操作的时候融合起来，一次循环完成。我们可以这样简单的理解，流里有个操作函数的集合，每次转换操作就是把转换函数放入这个集合中，在 Terminal 操作的时候循环流对应的集合，然后对每个元素执行所有的函数。
+
+**3、short-circuiting**
+
+- 对于一个 intermediate 操作，如果它接受的是一个无限大（infinite/unbounded）的流，但返回一个有限的新流。
+- 对于一个 terminal 操作，如果它接受的是一个无限大的流，但能在有限的时间计算出结果。当操作一个无限大的流，而又希望在有限时间内完成操作，则在管道内拥有一个 short-circuiting 操作是必要非充分条件。常见的操作：anyMatch、allMatch、 noneMatch、findFirst、findAny、limit
+
+```java
+// Uses the streams API but not the paradigm--Don't do this!
+Map<String, Long> freq = new HashMap<>();
+try (Stream<String> words = new Scanner(file).tokens()) {
+    words.forEach(word -> {
+        freq.merge(word.toLowerCase(), 1L, Long::sum);
+    });
+}
+
+// Proper use of streams to initialize a frequency table
+Map<String, Long> freq;
+try (Stream<String> words = new Scanner(file).tokens()) {
+    freq = words.collect(groupingBy(String::toLowerCase, counting()));
+}
+
+
+// Pipeline to get a top-ten list of words from a frequency table
+List<String> topTen = freq.keySet().stream()
+    .sorted(comparing(freq::get).reversed())
+    .limit(10)
+    .collect(toList());
+```
+
+
+
+ **The forEach operation should be used only to report the result of a stream computation, not to perform the computation.**
+
+**It is customary and wise to statically import all members of Collectors because it makes stream pipelines more readable.**
+
+
+
+##### collector:  
+
+toList(), toSet(), and toCollection(collectionFactory), toMap(keyMapper, valueMapper)
+
+```java
+// Using a toMap collector to make a map from string to enum
+private static final Map<String, Operation> stringToEnum =Stream.of(values()).collect(toMap(Object::toString, e -> e));
+```
+
+
+
+######  use of the three-argument form of toMap:
+
+```java
+// Collector to generate a map from key to chosen element for key
+Map<Artist, Album> topHits = albums.collect(
+        toMap(Album::artist, a->a, maxBy(comparing(Album::sales)
+    )
+));
+
+
+// Collector to impose last-write-wins policy
+toMap(keyMapper, valueMapper, (v1, v2) -> v2)
+```
+
+last-write-wins policy  :
+
+toConcurrentMap:
+
+Collectors API provides the groupingBy method, which returns collectors to produce maps that group elements into categories based on a classifier function.
+
+```java
+words.collect(groupingBy(word -> alphabetize(word)))
+```
+
+
+
+use of the two-argument form of groupingBy:
+
+```java
+Map<String, Long> freq = words.collect(groupingBy(String::toLowerCase, counting()));
+```
+
+groupingByConcurrent :
+
+partitioningBy: 
+
+minBy :
+
+maxBy:
+
+joining: 
+
+### Item 47: Prefer Collection to Stream as a return type
+
+```java
+// Adapter from Stream<E> to Iterable<E>
+public static <E> Iterable<E> iterableOf(Stream<E> stream) {
+    return stream::iterator;
+}
+```
+
+
+
+```java
+// Adapter from Iterable<E> to Stream<E>
+public static <E> Stream<E> streamOf(Iterable<E> iterable) {
+    return StreamSupport.stream(iterable.spliterator(), false);
+}
+```
+
+**Collection or an appropriate subtype is generally the best return type for a public, sequence-returning method.** 
+
+The Collection interface is a subtype of Iterable and has a stream method, so it provides for both iteration and stream access.
+
+
+
+**do not store a large sequence in memory just to return it as a collection.**
+
+AbstractList:
+
+```java
+// Returns the power set of an input set as custom collection
+public class PowerSet {
+    public static final <E> Collection<Set<E>> of(Set<E> s) {
+        List<E> src = new ArrayList<>(s);
+        if (src.size() > 30)
+            throw new IllegalArgumentException("Set too big " + s);
+
+        return new AbstractList<Set<E>>() {
+            @Override
+            public int size() {
+                return 1 << src.size(); // 2 to the power srcSize
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                return o instanceof Set && src.containsAll((Set)o);
+            }
+
+            @Override
+            public Set<E> get(int index) {
+                Set<E> result = new HashSet<>();
+                for (int i = 0; index != 0; i++, index >>= 1)
+                    if ((index & 1) == 1)
+                        result.add(src.get(i));
+                return result;
+            }
+        };
+    }
+}
+```
+
+
+
+```java
+// Returns a stream of all the sublists of its input list
+public class SubLists {
+    public static <E> Stream<List<E>> of(List<E> list) {
+        return Stream.concat(Stream.of(Collections.emptyList()),prefixes(list).flatMap(SubLists::suffixes));
+    }
+
+    private static <E> Stream<List<E>> prefixes(List<E> list) {
+        return IntStream.rangeClosed(1, list.size()).mapToObj(end -> list.subList(0, end));
+    }
+
+    private static <E> Stream<List<E>> suffixes(List<E> list) {
+        return IntStream.range(0, list.size()).mapToObj(start -> list.subList(start, list.size()));
+    }
+}
+
+
+
+// Returns a stream of all the sublists of its input list
+public static <E> Stream<List<E>> of(List<E> list) {
+    return IntStream.range(0, list.size())
+    .mapToObj(start ->
+    IntStream.rangeClosed(start + 1, list.size())
+    .mapToObj(end -> list.subList(start, end)))
+    .flatMap(x -> x);
+}
+```
+
+Math.signum:
+
+The **java.lang.Math.signum(float f)** returns the signum function of the argument; zero if the argument is zero, 1.0f if the argument is greater than zero, -1.0f if the argument is less than zero.
+
+Special Cases:
+
+1. If the argument is NaN, then the result is NaN.
+2. If the argument is positive zero or negative zero, then the result is the same as the argument
+
+
+
+
+
+### Item 48: Use caution when making streams parallel
+
+**parallelizing a pipeline is unlikely to increase its performance if the source is from Stream.iterate, or the intermediate operation limit is used**
+
+
+
+**Do not parallelize stream pipelines indiscriminately.**
+
+As a rule, **performance gains from parallelism are best on streams over ArrayList, HashMap, HashSet, and ConcurrentHashMap instances; arrays; int ranges; and long ranges**
+
+**Not only can parallelizing a stream lead to poor performance, including liveness failures; it can lead to incorrect results and unpredictable behavior**
+
+
+
+### Item 49: Check parameters for validity
+
+This chapter discusses several aspects of method design: how to treat parameters and return values, how to design method signatures, and how to document methods.
+
+method: 
+
+ treat parameters:
+
+not uncommon: index values must be non-negative and object references must be non-null.
+
+You should clearly document all such restrictions and enforce them with checks at the beginning of the method body. 
+
+```
+/**
+* Returns a BigInteger whose value is (this mod m). This method
+* differs from the remainder method in that it always returns a
+* non-negative BigInteger.
+**
+@param m the modulus, which must be positive
+* @return this mod m
+* @throws ArithmeticException if m is less than or equal to 0
+*/
+public BigInteger mod(BigInteger m) {
+    if (m.signum() <= 0)
+        throw new ArithmeticException("Modulus <= 0: " + m);
+    ... // Do the computation
+}
+```
+
+If the method fails to check its parameters:
+
+1. The method could fail with a confusing exception in the midst of processing
+2. the method could return normally but silently compute the wrong result. 
+3. the method could return normally but leave some object in a compromised state, causing an error at some unrelated point in the code at some undetermined time in the future. 
+
+
+
+BigInteger.signum():  This method returns -1, 0 or 1 as the value of this BigInteger is negative, zero or positive.
+
+
+
+**The Objects.requireNonNull method, added in Java 7, is flexible and convenient, so there’s no reason to perform null checks manually anymore.**
+
+```java
+// Inline use of Java's null-checking facility
+this.strategy = Objects.requireNonNull(strategy, "strategy");
+```
+
+In Java 9, a range-checking facility was added to java.util.Objects. This facility consists of three methods: checkFromIndexSize, checkFromToIndex, and checkIndex.
+
+ nonpublic methods can check their parameters using assertions, as shown below:
+
+```java
+// Private helper function for a recursive sort
+private static void sort(long a[], int offset, int length) {
+    assert a != null;
+    assert offset >= 0 && offset <= a.length;
+    assert length >= 0 && length <= a.length - offset;
+    ... // Do the computation
+}
+```
+
+
+
+loss of failure atomicity:
+
+failure atomicity: if a method threw an exception, the object should still be usable afterwards. Generally, the object should be in the same state as it was before invoking the method.
+
+###### Strive for failure atomicity:
+
+1. 设计一个不可变的对象
+2. 对计算过程进行排序，使得任何可能会失败的计算都在对象被修改之前发生
+3. 编写恢复代码（recovery code），但这种做法并不长用，该代码拦截在操作中发生的失败，并使对象将其状态回滚到操作开始之前的点。 此方法主要用于持久性的（基于磁盘）的数据结构。
+
