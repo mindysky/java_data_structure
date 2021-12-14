@@ -1559,15 +1559,147 @@ List<String> topTen = freq.keySet().stream()
     .collect(toList());
 ```
 
-
-
- **The forEach operation should be used only to report the result of a stream computation, not to perform the computation.**
+**The forEach operation should be used only to report the result of a stream computation, not to perform the computation.**
 
 **It is customary and wise to statically import all members of Collectors because it makes stream pipelines more readable.**
 
 
 
-##### collector:  
+##### collector:  Collector是专门用来作为Stream的collect方法的参数的
+
+Collector主要包含五个参数，它的行为也是由这五个参数来定义的，如下所示
+
+```java
+public interface Collector<T, A, R> {
+    // supplier参数用于生成结果容器，容器类型为A
+    Supplier<A> supplier();
+    // accumulator用于消费元素，也就是归纳元素，这里的T就是元素，它会将流中的元素一个一个与结果容器A发生操作
+    BiConsumer<A, T> accumulator();
+    // combiner用于两个两个合并并行执行的线程的执行结果，将其合并为一个最终结果A
+    BinaryOperator<A> combiner();
+    // finisher用于将之前整合完的结果R转换成为A
+    Function<A, R> finisher();
+    // characteristics表示当前Collector的特征值，这是个不可变Set
+    Set<Characteristics> characteristics();
+}
+
+```
+
+Collectors是一个工具类，是JDK预实现Collector的工具类，它内部提供了多种Collector:
+
+```java
+//toCollection
+List<String> ll = list.stream().collect(Collectors.toCollection(LinkedList::new));
+
+//toList
+List<String> ll = list.stream().collect(Collectors.toList());
+
+//toSet
+Set<String> ss = list.stream().collect(Collectors.toSet());
+
+//joining
+// 无参方法
+String s = list.stream().collect(Collectors.joining());
+System.out.println(s);
+// 指定连接符
+String ss = list.stream().collect(Collectors.joining("-"));
+System.out.println(ss);
+// 指定连接符和前后缀
+String sss = list.stream().collect(Collectors.joining("-","S","E"));
+System.out.println(sss);
+
+//mapping
+List<Integer> ll = list.stream().limit(5).collect(Collectors.mapping(Integer::valueOf,Collectors.toList()));
+
+//collectingAndThen
+int length = list.stream().collect(Collectors.collectingAndThen(Collectors.toList(),e -> e.size()));
+
+//counting
+ long size = list.stream().collect(Collectors.counting());
+
+//minBy/maxBy : 生成一个用于获取最小/最大值的Optional结果的Collector
+System.out.println(list.stream().collect(Collectors.maxBy((a,b) -> a.length()-b.length())));
+System.out.println(list.stream().collect(Collectors.minBy((a,b) -> a.length()-b.length())));
+
+//summingInt/summingLong/summingDouble
+//生成一个用于求元素和的Collector，首先通过给定的mapper将元素转换类型，然后再求和
+int i = list.stream().limit(3).collect(Collectors.summingInt(Integer::valueOf));
+long l = list.stream().limit(3).collect(Collectors.summingLong(Long::valueOf));
+double d = list.stream().limit(3).collect(Collectors.summingDouble(Double::valueOf));
+
+//averagingInt/averagingLong/averagingDouble
+double i = list.stream().limit(3).collect(Collectors.averagingInt(Integer::valueOf));
+double l = list.stream().limit(3).collect(Collectors.averagingLong(Long::valueOf));
+double d = list.stream().limit(3).collect(Collectors.averagingDouble(Double::valueOf));
+
+//reducing : reducing方法有三个重载方法
+// 无初始值的情况，返回一个可以生成Optional结果的Collector
+public static <T> Collector<T, ?, Optional<T>> reducing(BinaryOperator<T> op) {/*...*/}
+// 有初始值的情况，返回一个可以直接产生结果的Collector
+public static <T> Collector<T, ?, T> reducing(T identity, BinaryOperator<T> op) {/*...*/}
+// 有初始值，还有针对元素的处理方案mapper，生成一个可以直接产生结果的Collector，元素在执行结果操作op之前需要先执行mapper进行元素转换操作
+public static <T, U> Collector<T, ?, U> reducing(U identity,
+                                    Function<? super T, ? extends U> mapper,
+                                    BinaryOperator<U> op) {/*...*/}
+
+//groupingBy:  用于生成一个拥有分组功能的Collector，它也有三个重载方法
+public final class Collectors {
+    // 只需一个分组参数classifier，内部自动将结果保存到一个map中，每个map的键为?类型（即classifier的结果类型），值为一个list，这个list中保存在属于这个组的元素。
+    public static <T, K> Collector<T, ?, Map<K, List<T>>> groupingBy(
+            Function<? super T, ? extends K> classifier) {/*...*/}
+    // 在上面方法的基础上增加了对流中元素的处理方式的Collector，比如上面的默认的处理方法就是Collectors.toList()
+    public static <T, K, A, D>Collector<T, ?, Map<K, D>> groupingBy(
+            Function<? super T, ? extends K> classifier,Collector<? super T, A, D> downstream) {/*...*/}
+    // 在第二个方法的基础上再添加了结果Map的生成方法。
+    public static <T, K, D, A, M extends Map<K, D>>
+        Collector<T, ?, M> groupingBy(Function<? super T, ? extends K> classifier,
+                                      Supplier<M> mapFactory,
+                                      Collector<? super T, A, D> downstream) {/*...*/}
+}
+
+Map<Integer,List<String>> s = list.stream().collect(Collectors.groupingBy(String::length));
+Map<Integer,List<String>> ss = list.stream().collect(Collectors.groupingBy(String::length, Collectors.toList()));
+Map<Integer,Set<String>> sss = list.stream().collect(Collectors.groupingBy(String::length,HashMap::new,Collectors.toSet()));
+
+//partitioningBy
+//该方法将流中的元素按照给定的校验规则的结果分为两个部分，放到一个map中返回，map的键是Boolean类型，值为元素的列表List
+Map<Boolean,List<String>> map = list.stream().collect(Collectors.partitioningBy(e -> e.length()>5));
+Map<Boolean,Set<String>> map2 = list.stream().collect(Collectors.partitioningBy(e -> e.length()>6,Collectors.toSet()));
+
+//toMap
+public final class Collectors {
+    // 指定键和值的生成方式keyMapper和valueMapper
+    public static <T, K, U>
+        Collector<T, ?, Map<K,U>> toMap(Function<? super T, ? extends K> keyMapper,
+                                        Function<? super T, ? extends U> valueMapper) {/*...*/}
+    // 在上面方法的基础上增加了对键发生重复时处理方式的mergeFunction，比如上面的默认的处理方法就是抛出异常
+    public static <T, K, U>
+        Collector<T, ?, Map<K,U>> toMap(Function<? super T, ? extends K> keyMapper,
+                                        Function<? super T, ? extends U> valueMapper,
+                                        BinaryOperator<U> mergeFunction) {/*...*/}
+    // 在第二个方法的基础上再添加了结果Map的生成方法。
+    public static <T, K, U, M extends Map<K, U>>
+        Collector<T, ?, M> toMap(Function<? super T, ? extends K> keyMapper,
+                                    Function<? super T, ? extends U> valueMapper,
+                                    BinaryOperator<U> mergeFunction,
+                                    Supplier<M> mapSupplier) {/*...*/}
+}
+
+Map<String,String> map = list.stream().limit(3).collect(Collectors.toMap(e -> e.substring(0,1),e -> e));
+Map<String,String> map1 = list.stream().collect(Collectors.toMap(e -> e.substring(0,1),e->e,(a,b)-> b));
+Map<String,String> map2 = list.stream().collect(Collectors.toMap(e -> e.substring(0,1),e->e,(a,b)-> b,HashMap::new));
+
+//toConcurrentMap,同样三种重载方法，与toMap基本一致，只是它最后使用的map是并发Map:ConcurrentHashMap
+
+//summarizingInt/summarizingLong/summarizingDouble
+//返回值中包含有流中元素的指定结果的数量、和、最大值、最小值、平均值
+IntSummaryStatistics intSummary = list.stream().collect(Collectors.summarizingInt(String::length));
+LongSummaryStatistics longSummary = list.stream().limit(4).collect(Collectors.summarizingLong(Long::valueOf));
+DoubleSummaryStatistics doubleSummary = list.stream().limit(3).collect(Collectors.summarizingDouble(Double::valueOf));
+
+```
+
+
 
 toList(), toSet(), and toCollection(collectionFactory), toMap(keyMapper, valueMapper)
 
