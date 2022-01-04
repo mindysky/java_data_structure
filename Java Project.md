@@ -347,7 +347,7 @@ server {
 
 nginx的命令
 
-```
+```nginx
 start nginx #启动
 nginx -s stop #停止
 nginx -s reload #重新加载配置
@@ -790,3 +790,20 @@ HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(claims), secret)    =
 
 
 
+# 一、运行Nacos注册中心
+
+## 2、Windows启动Nacos
+
+参考：https://github.com/alibaba/nacos
+
+解压：将下载的压缩包解压
+
+
+
+启动：startup.cmd -m standalone
+
+## 3、访问
+
+http://localhost:8848/nacos
+
+用户名密码：nacos/nacos

@@ -9,6 +9,7 @@
         <module>service-core</module>
         <module>service-gateway</module>
         <module>service-oss</module>
+        <module>service-sms</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -188,26 +189,11 @@
                 <version>${httpclient.version}</version>
             </dependency>
 
-
         </dependencies>
     </dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
         <resources>
-
             <resource>
                 <!--指定根目录 到源文件夹 一般如下-->
                 <directory>src/main/java</directory>

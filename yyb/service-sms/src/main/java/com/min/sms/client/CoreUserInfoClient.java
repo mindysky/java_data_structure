@@ -1,6 +1,7 @@
-package com.atguigu.srb.sms.client;
+package com.min.sms.client;
 
-import com.atguigu.srb.sms.client.fallback.CoreUserInfoClientFallback;
+
+import com.min.sms.client.fallback.CoreUserInfoClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

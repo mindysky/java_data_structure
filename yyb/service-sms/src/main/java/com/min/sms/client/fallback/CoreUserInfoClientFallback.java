@@ -1,6 +1,6 @@
-package com.atguigu.srb.sms.client.fallback;
+package com.min.sms.client.fallback;
 
-import com.atguigu.srb.sms.client.CoreUserInfoClient;
+import com.min.sms.client.CoreUserInfoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

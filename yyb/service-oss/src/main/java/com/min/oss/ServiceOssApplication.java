@@ -8,6 +8,10 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan({"com.min", "com.min.common"})
 public class ServiceOssApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ServiceOssApplication.class, args);
+        try {
+            SpringApplication.run(ServiceOssApplication.class, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

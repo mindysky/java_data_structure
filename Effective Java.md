@@ -1857,9 +1857,41 @@ Special Cases:
 
 ### Item 48: Use caution when making streams parallel
 
+串行： item->item
+
+并行流就是一个把数据分成多个数据块，并用不不同的线程分别处理每个数据块的流，最后合并每个数据块的计算结果。
+
+parallelizing a stream is strictly a performance optimization
+
+将一个顺序执行的流转变成一个并发的流只要调用 parallel()方法
+
+多线程异步任务的一种实现
+
+you must test the performance before and after the change to ensure that it is worth doing
+
+```java
+// Prime-counting stream pipeline - benefits from parallelization
+static long pi(long n) {
+    return LongStream.rangeClosed(2, n)
+    .mapToObj(BigInteger::valueOf)
+    .filter(i -> i.isProbablePrime(50))
+    .count();
+}
+
+
+// Prime-counting stream pipeline - parallel version
+static long pi(long n) {
+    return LongStream.rangeClosed(2, n)
+    .parallel()
+    .mapToObj(BigInteger::valueOf)
+    .filter(i -> i.isProbablePrime(50))
+    .count();
+}
+```
+
+
+
 **parallelizing a pipeline is unlikely to increase its performance if the source is from Stream.iterate, or the intermediate operation limit is used**
-
-
 
 **Do not parallelize stream pipelines indiscriminately.**
 
@@ -1867,9 +1899,111 @@ As a rule, **performance gains from parallelism are best on streams over ArrayLi
 
 **Not only can parallelizing a stream lead to poor performance, including liveness failures; it can lead to incorrect results and unpredictable behavior**
 
+If a significant amount of work is done in the terminal operation compared to the overall work of the pipeline and that operation is inherently sequential, then parallelizing the pipeline will have limited effectiveness.
+
+The best terminal operations for parallelism are reductions:  min, max, count, and sum
+
+The short-circuiting operations anyMatch, allMatch, and noneMatch are also amenable to parallelism
+
+the accumulator and combiner functions passed to Stream’s reduce operation must be associative, non-interfering, and stateless.
+
+```java
+forEachOrdered
+    
+    //并行转顺序流
+    stream.parallel() .filter(...) .sequential() .map(...) .parallel() .reduce();
+
+List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9); 
+numbers.parallelStream().forEach(num->System.out.println(num));
+
+输出：3 4 2 6 7 9 8 1 5
+
+       List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9); 
+   numbers.parallelStream() .forEach(num-
+   		>System.out.println(Thread.currentThread().getName()+">>"+num)); 
+
+
+
+```
+
+SplittableRandom :   Fork Join Pool` 和并行 `Stream`，则使用 `SplittableRandom
+
+ThreadLocalRandom:   相对于Random可以减少多线程资源竞争，保证了线程的安全性
+
+如何高效使用并发流的一些建议：
+
+1. 如果不确定， 就自己测试。
+2. 尽量使用基本类型的流  IntStream, LongStream, and DoubleStream
+3. 有些操作使用并发流的性能会比顺序流的性能更差，比如limit，findFirst ， 依赖元素顺序的操作在并发流中是极其消耗性能的 。findAny的性能就会好很多，应为不依赖顺序。
+4. 考虑流中计算的性能(Q)和操作的性能(N)的对比, Q表示单个处理所需的时间， N表示需要处理的数量，如果Q的值越大, 使用并发流的性能就会越高。
+5. 数据量不大时使用并发流，性能得不到提升。
+6. 考虑数据结构：并发流需要对数据进行分解，不同的数据结构被分解的性能时不一样的。
+
+ **流的数据源和可分解性**
+
+| **源**          | **可分解性** |
+| --------------- | ------------ |
+| ArrayList       | 非常好       |
+| LinkedList      | 差           |
+| IntStream.range | 非常好       |
+| Stream.iterate  | 差           |
+| HashSet         | 好           |
+| TreeSet         | 好           |
+
+7. 流的特性以及中间操作对流的修改都会对数据对分解性能造成影响。 比如固定大小的流在任务分解的时候就可以平均分配，但是如果有filter操作，那么流就不能预先知道在这个操作后还会剩余多少元素。
+
+8. 考虑最终操作的性能：如果最终操作在合并并发流的计算结果时的性能消耗太大，那么使用并发流提升的性能就会得不偿失。
+
+9. 需要理解并发流实现机制：
+
+   fork/join框架的目的是以递归方式将可以并行的任务拆分成更小的任务，然后将每个子任务的结果合并起来生成整体结果。它是ExecutorService接口的一个实现，它把子任务分配线程池（ForkJoinPool）中的工作线程。要把任务提交到这个线程池，必须创建RecursiveTask<R>的一个子类，如果任务不返回结果则是 RecursiveAction的子类。
+   
+
+
+
+do not even attempt to parallelize a stream pipeline unless you have good reason to believe that it will preserve the correctness of the computation and increase its speed.
+
+performance measurements under realistic conditions
+
+```java
+//parallize
+ForkJoinPool pool = new ForkJoinPool(2);
+ret = pool.submit(() -> {
+    return LongStream.range(1, 50 * 1024 * 1024).boxed().collect(Collectors.toList())
+            .stream()
+            .parallel()
+            .map(x -> x * 2)
+            .filter(x -> x < 1500)
+            .reduce((x,y) -> x+y)
+            .get();
+}).get();
+```
+
+**线程安全**
+
+由于并行流使用多线程，则一切线程安全问题都应该是需要考虑的问题，如：资源竞争、死锁、事务、可见性等等。
+
+**线程消费**
+
+在虚拟机启动时，我们指定了worker线程的数量，整个程序的生命周期都将使用这些工作线程；这必然存在任务生产和消费的问题，如果某个生产者生产了许多重量级的任务（耗时很长），那么其他任务毫无疑问将会没有工作线程可用；更可怕的事情是这些工作线程正在进行IO阻塞。
+
+本应利用并行加速处理的业务，因为工作者不够反而会额外增加处理时间，使得系统性能在某一时刻大打折扣。而且这一类问题往往是很难排查的。我们并不知道一个重量级项目中的哪一个框架、哪一个模块在使用并行流。
+
+
+
+**串行流**：适合存在线程安全问题、阻塞任务、重量级任务，以及需要使用同一事务的逻辑。
+
+**并行流**：适合没有线程安全问题、较单纯的数据处理任务。
+
 
 
 ### Item 49: Check parameters for validity
+
+program principle: 编程思想, 就是 **Fail-fast**   :  
+
+ 让错误尽可能早的出现, 不要等到我们很多工作执行到一半之后才抛出异常, 这样很可能使得一部分变量处于异常状态, 出现更多的错误. 
+
+ you should attempt to detect errors as soon as possible after they occur
 
 This chapter discusses several aspects of method design: how to treat parameters and return values, how to design method signatures, and how to document methods.
 
@@ -1902,9 +2036,7 @@ If the method fails to check its parameters:
 
 1. The method could fail with a confusing exception in the midst of processing
 2. the method could return normally but silently compute the wrong result. 
-3. the method could return normally but leave some object in a compromised state, causing an error at some unrelated point in the code at some undetermined time in the future. 
-
-
+3. the method could return normally but leave some object in a compromised state, causing an error at some unrelated point in the code at some undetermined time in the future.
 
 BigInteger.signum():  This method returns -1, 0 or 1 as the value of this BigInteger is negative, zero or positive.
 
@@ -1915,9 +2047,67 @@ BigInteger.signum():  This method returns -1, 0 or 1 as the value of this BigInt
 ```java
 // Inline use of Java's null-checking facility
 this.strategy = Objects.requireNonNull(strategy, "strategy");
+
+/**
+ * Checks that the specified object reference is not {@code null} and
+ * throws a customized {@link NullPointerException} if it is. This method
+ * is designed primarily for doing parameter validation in methods and
+ * constructors with multiple parameters, as demonstrated below:
+ * <blockquote><pre>
+ * public Foo(Bar bar, Baz baz) {
+ *     this.bar = Objects.requireNonNull(bar, "bar must not be null");
+ *     this.baz = Objects.requireNonNull(baz, "baz must not be null");
+ * }
+ * </pre></blockquote>
+ *
+ * @param obj     the object reference to check for nullity
+ * @param message detail message to be used in the event that a {@code
+ *                NullPointerException} is thrown
+ * @param <T> the type of the reference
+ * @return {@code obj} if not {@code null}
+ * @throws NullPointerException if {@code obj} is {@code null}
+ */
+public static <T> T requireNonNull(T obj, String message) {
+    if (obj == null)
+        throw new NullPointerException(message);
+    return obj;
+}
+
+/**
+ * Checks that the specified object reference is not {@code null}. This
+ * method is designed primarily for doing parameter validation in methods
+ * and constructors, as demonstrated below:
+ * <blockquote><pre>
+ * public Foo(Bar bar) {
+ *     this.bar = Objects.requireNonNull(bar);
+ * }
+ * </pre></blockquote>
+ *
+ * @param obj the object reference to check for nullity
+ * @param <T> the type of the reference
+ * @return {@code obj} if not {@code null}
+ * @throws NullPointerException if {@code obj} is {@code null}
+ */
+public static <T> T requireNonNull(T obj) {
+    if (obj == null)
+        throw new NullPointerException();
+    return obj;
+}
+
+
 ```
 
-In Java 9, a range-checking facility was added to java.util.Objects. This facility consists of three methods: checkFromIndexSize, checkFromToIndex, and checkIndex.
+In Java 9, a range-checking facility was added to java.util.Objects. This facility consists of three methods: 
+
+checkFromIndexSize
+
+checkFromToIndex
+
+checkIndex
+
+ it is designed solely for use on list and array indices
+
+
 
  nonpublic methods can check their parameters using assertions, as shown below:
 
@@ -1943,3 +2133,68 @@ failure atomicity: if a method threw an exception, the object should still be us
 2. 对计算过程进行排序，使得任何可能会失败的计算都在对象被修改之前发生
 3. 编写恢复代码（recovery code），但这种做法并不长用，该代码拦截在操作中发生的失败，并使对象将其状态回滚到操作开始之前的点。 此方法主要用于持久性的（基于磁盘）的数据结构。
 
+It is particularly important to check the validity of parameters that are not used by a method, but stored for later use. 
+
+exception translation idiom:   
+
+```java
+/**
+* Returns the element at the specified position in this list.
+* @throws IndexOutOfBoundsException if the index is out of range
+* ({@code index < 0 || index >= size()}).
+*/
+public E get(int index) {
+    ListIterator<E> i = listIterator(index);
+    try {
+        return i.next();
+    }
+    catch (NoSuchElementException e) {
+        throw new IndexOutOfBoundsException("Index: " + index);
+    }
+}
+```
+
+
+
+### Item 50: Make defensive copies when needed
+
+ **You must program defensively, with the assumption that clients of your class will do their best to destroy its invariants.** 
+
+**Date is obsolete and should no longer be used in new code**  :  Date is mutable
+
+Instant (and the other java.time classes) are immutable
+
+**it is essential to make a defensive copy of each mutable parameter to the constructor**
+
+```java
+// Repaired constructor - makes defensive copies of parameters
+public Period(Date start, Date end) {
+    this.start = new Date(start.getTime());
+    this.end = new Date(end.getTime());
+    if (this.start.compareTo(this.end) > 0)
+        throw new IllegalArgumentException(this.start + " after " + this.end);
+}
+```
+
+**defensive copies are made before checking the validity of the parameters (Item 49), and the validity check is performed on the copies rather than on the originals.** 
+
+**do not use the clone method to make a defensive copy of a parameter whose type is subclassable by untrusted parties.**
+
+
+
+```java
+// Repaired accessors - make defensive copies of internal fields
+public Date start() {
+    return new Date(start.getTime());
+}
+
+public Date end() {
+    return new Date(end.getTime());
+}
+```
+
+
+
+
+
+### Item 51: Design method signatures carefully

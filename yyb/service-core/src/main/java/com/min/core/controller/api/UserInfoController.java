@@ -1,10 +1,14 @@
 package com.min.core.controller.api;
 
+import com.min.base.util.JwtUtils;
 import com.min.common.exception.Assert;
 import com.min.common.result.R;
 import com.min.common.result.ResponseEnum;
 import com.min.common.util.RegexValidateUtils;
+import com.min.core.pojo.vo.LoginVO;
 import com.min.core.pojo.vo.RegisterVO;
+import com.min.core.pojo.vo.UserIndexVO;
+import com.min.core.pojo.vo.UserInfoVO;
 import com.min.core.service.UserInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 @Api(tags = "会员接口")
 @RestController
@@ -51,5 +56,50 @@ public class UserInfoController {
         //注册
         userInfoService.register(registerVO);
         return R.ok().message("注册成功");
+    }
+
+    @ApiOperation("会员登录")
+    @PostMapping("/login")
+    public R login(@RequestBody LoginVO loginVO, HttpServletRequest request){
+
+        String mobile = loginVO.getMobile();
+        String password = loginVO.getPassword();
+
+        Assert.notEmpty(mobile, ResponseEnum.MOBILE_NULL_ERROR);
+        Assert.notEmpty(password, ResponseEnum.PASSWORD_NULL_ERROR);
+
+        String ip = request.getRemoteAddr();
+        UserInfoVO userInfoVO = userInfoService.login(loginVO, ip);
+
+        return R.ok().data("userInfo", userInfoVO);
+    }
+
+    @ApiOperation("校验令牌")
+    @GetMapping("/checkToken")
+    public R checkToken(HttpServletRequest request) {
+
+        String token = request.getHeader("token");
+        boolean result = JwtUtils.checkToken(token);
+
+        if(result){
+            return R.ok();
+        }else{
+            return R.setResult(ResponseEnum.LOGIN_AUTH_ERROR);
+        }
+    }
+
+    @ApiOperation("校验手机号是否注册")
+    @GetMapping("/checkMobile/{mobile}")
+    public boolean checkMobile(@PathVariable String mobile){
+        return userInfoService.checkMobile(mobile);
+    }
+
+    @ApiOperation("获取个人空间用户信息")
+    @GetMapping("/auth/getIndexUserInfo")
+    public R getIndexUserInfo(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        Long userId = JwtUtils.getUserId(token);
+        UserIndexVO userIndexVO = userInfoService.getIndexUserInfo(userId);
+        return R.ok().data("userIndexVO", userIndexVO);
     }
 }

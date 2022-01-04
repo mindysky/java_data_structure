@@ -4,7 +4,7 @@
     <contextName>min</contextName>
 
     <!-- 日志的输出目录 -->
-    <property name="log.path" value="D:/project/test/srb_log/oss" />
+    <property name="log.path" value="D:/project/test/srb_log/sms" />
 
     <!--控制台日志格式：彩色日志-->
     <!-- magenta:洋红 -->
@@ -67,7 +67,7 @@
 
     <!-- 开发环境和测试环境 -->
     <springProfile name="dev,test">
-        <logger name="com.min" level="INFO">
+        <logger name="com.min" level="DEBUG">
             <appender-ref ref="CONSOLE" />
             <appender-ref ref="FILE" />
         </logger>

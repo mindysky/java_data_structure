@@ -55,6 +55,29 @@
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
         </dependency>
+        <dependency>
+            <groupId>ga.rugal</groupId>
+            <artifactId>feign-client-generator</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.bitgrip.archetypes</groupId>
+            <artifactId>spring-boot-service</artifactId>
+            <version>0.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <!-- 项目打包时会将java目录中的*.xml文件也进行打包 -->

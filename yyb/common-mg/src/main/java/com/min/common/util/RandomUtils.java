@@ -1,4 +1,4 @@
-package com.atguigu.common.util;
+package com.min.common.util;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
