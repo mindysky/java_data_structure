@@ -1,4 +1,4 @@
-package com.atguigu.srb.core.hfb;
+package com.min.core.hfb;
 
 /**
  * 汇付宝常量定义

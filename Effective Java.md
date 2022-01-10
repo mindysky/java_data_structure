@@ -1857,15 +1857,21 @@ Special Cases:
 
 ### Item 48: Use caution when making streams parallel
 
-串行： item->item
+串行Sequential ： item->item  By default, **any stream operation in Java is processed sequentially, unless explicitly specified as parallel.** 
+
+Sequential streams use a single thread to process the pipeline:
 
 并行流就是一个把数据分成多个数据块，并用不不同的线程分别处理每个数据块的流，最后合并每个数据块的计算结果。
+
+Parallel streams enable us to execute code in parallel on separate cores.
 
 parallelizing a stream is strictly a performance optimization
 
 将一个顺序执行的流转变成一个并发的流只要调用 parallel()方法
 
 多线程异步任务的一种实现
+
+The fork-join framework is in charge of **splitting the source data between worker threads and handling callback on task completion.**
 
 you must test the performance before and after the change to ensure that it is worth doing
 
@@ -1965,6 +1971,8 @@ do not even attempt to parallelize a stream pipeline unless you have good reason
 
 performance measurements under realistic conditions
 
+### Custom Thread Pool
+
 ```java
 //parallize
 ForkJoinPool pool = new ForkJoinPool(2);
@@ -1977,6 +1985,8 @@ ret = pool.submit(() -> {
             .reduce((x,y) -> x+y)
             .get();
 }).get();
+//the customThreadPool object won't be dereferenced and garbage collected — instead, it will be waiting for new tasks to be assigned.
+//The fix to the problem is pretty simple: shutdown the customThreadPool object after we've executed the method
 ```
 
 **线程安全**
@@ -1989,13 +1999,43 @@ ret = pool.submit(() -> {
 
 本应利用并行加速处理的业务，因为工作者不够反而会额外增加处理时间，使得系统性能在某一时刻大打折扣。而且这一类问题往往是很难排查的。我们并不知道一个重量级项目中的哪一个框架、哪一个模块在使用并行流。
 
+##### 内存局部性(Memory locality)
 
+访问内存时，大概率会访问连续的块，而不是单一的内存地址，其实就是空间局部性在内存上的体现。目前计算机设计中，都是以块/页为单位管理调度存储，其实就是在利用空间局部性来优化性能
 
 **串行流**：适合存在线程安全问题、阻塞任务、重量级任务，以及需要使用同一事务的逻辑。
 
 **并行流**：适合没有线程安全问题、较单纯的数据处理任务。
 
 
+
+#####  the overhead of managing multiple threads
+
+```java
+IntStream.rangeClosed(1, 100).reduce(0, Integer::sum);
+IntStream.rangeClosed(1, 100).parallel().reduce(0, Integer::sum);
+//sometimes the overhead of managing threads, sources and results is a more expensive operation than doing the actual work
+```
+
+##### Splitting Costs:
+
+**arrays can split cheaply and evenly**, while *LinkedList* has none of these properties. [*TreeMap*](https://www.baeldung.com/java-treemap) and [*HashSet*](https://www.baeldung.com/java-hashset) split better than *LinkedList* but not as well as arrays
+
+##### Merging Costs:
+
+The merge operation is really cheap for some operations, such as reduction and addition, but **merge operations like grouping to sets or maps can be quite expensive**
+
+##### memory locality:
+
+**the more pointers we have in our data structure, the more pressure we put on the memory** to fetch the reference objects. This can have a negative effect on  parallelization, as multiple cores simultaneously fetch the data from  memory
+
+##### The *NQ* Model:
+
+*N* stands for the number of source data elements, while *Q* represents the amount of computation performed per data element.
+
+The larger the product of *N\*Q*, the more likely we are to get a performance boost from parallelization. 
+
+**As the number of computations increases, the data size required to get a performance boost from parallelism decreases.**
 
 ### Item 49: Check parameters for validity
 

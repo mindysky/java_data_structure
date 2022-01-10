@@ -1,8 +1,8 @@
-package com.atguigu.srb.core.hfb;
+package com.min.core.hfb;
 
 import com.alibaba.fastjson.JSONObject;
-import com.atguigu.common.util.HttpUtils;
-import com.atguigu.common.util.MD5;
+import com.min.common.util.HttpUtils;
+import com.min.common.util.MD5;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;

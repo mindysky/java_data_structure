@@ -1,4 +1,4 @@
-package com.atguigu.srb.core.enums;
+package com.min.core.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

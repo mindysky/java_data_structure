@@ -21,7 +21,7 @@ import java.util.List;
  * @author Mindy
  * @since 2021-09-06
  */
-@CrossOrigin
+//@CrossOrigin
 @RestController
 @RequestMapping("/admin/core/integralGrade")
 public class AdminIntegralGradeController {

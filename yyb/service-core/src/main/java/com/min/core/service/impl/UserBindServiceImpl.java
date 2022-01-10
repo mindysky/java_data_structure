@@ -2,6 +2,7 @@ package com.min.core.service.impl;
 
 import com.min.core.pojo.entity.UserBind;
 import com.min.core.mapper.UserBindMapper;
+import com.min.core.pojo.vo.UserBindVO;
 import com.min.core.service.UserBindService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -17,4 +18,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserBindServiceImpl extends ServiceImpl<UserBindMapper, UserBind> implements UserBindService {
 
+    @Override
+    public String commitBindUser(UserBindVO userBindVO, Long userId) {
+        return null;
+    }
 }
