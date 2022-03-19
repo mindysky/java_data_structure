@@ -1956,14 +1956,16 @@ ThreadLocalRandom:   相对于Random可以减少多线程资源竞争，保证�
 | HashSet         | 好           |
 | TreeSet         | 好           |
 
-7. 流的特性以及中间操作对流的修改都会对数据对分解性能造成影响。 比如固定大小的流在任务分解的时候就可以平均分配，但是如果有filter操作，那么流就不能预先知道在这个操作后还会剩余多少元素。
+​     * 两个静态方法来从函数生成流Stream.iterate和Stream.generate, 这两个操作可以创建所谓的无限流
 
-8. 考虑最终操作的性能：如果最终操作在合并并发流的计算结果时的性能消耗太大，那么使用并发流提升的性能就会得不偿失。
+1. 流的特性以及中间操作对流的修改都会对数据对分解性能造成影响。 比如固定大小的流在任务分解的时候就可以平均分配，但是如果有filter操作，那么流就不能预先知道在这个操作后还会剩余多少元素。
 
-9. 需要理解并发流实现机制：
+2. 考虑最终操作的性能：如果最终操作在合并并发流的计算结果时的性能消耗太大，那么使用并发流提升的性能就会得不偿失。
+
+3. 需要理解并发流实现机制：
 
    fork/join框架的目的是以递归方式将可以并行的任务拆分成更小的任务，然后将每个子任务的结果合并起来生成整体结果。它是ExecutorService接口的一个实现，它把子任务分配线程池（ForkJoinPool）中的工作线程。要把任务提交到这个线程池，必须创建RecursiveTask<R>的一个子类，如果任务不返回结果则是 RecursiveAction的子类。
-   
+
 
 
 
@@ -2012,8 +2014,18 @@ ret = pool.submit(() -> {
 #####  the overhead of managing multiple threads
 
 ```java
+ IntStream.of(1, 2, 3);//返回一个intStream
+ IntStream.range(1,20).forEach(i-> System.out.print(i+","));//返回一个1-19的数字流
+ IntStream.rangeClosed(1,20).forEach(i-> System.out.print(i+","));//返回的一个1-20的数字流
+```
+
+
+
+```java
 IntStream.rangeClosed(1, 100).reduce(0, Integer::sum);
 IntStream.rangeClosed(1, 100).parallel().reduce(0, Integer::sum);
+
+
 //sometimes the overhead of managing threads, sources and results is a more expensive operation than doing the actual work
 ```
 
@@ -2235,6 +2247,52 @@ public Date end() {
 
 
 
-
-
 ### Item 51: Design method signatures carefully
+
+**Choose method names carefully.**
+
+Avoid long method names
+
+choose names consistent with the broader consensus
+
+**Don’t go overboard in providing convenience methods.**
+
+**Avoid long parameter lists.**
+
+Aim for four parameters or fewer
+
+**Long sequences of identically typed parameters are especially harmful**. 
+
+There are three techniques for shortening overly long parameter lists
+
+1. One is to break the method up into multiple methods, each of which requires only a subset of the parameters.
+2. create helper classes to hold groups of parameters
+3. combines aspects of the first two is to adapt the Builder pattern (Item 2) from object construction to method invocation
+
+**For parameter types, favor interfaces over classes**
+
+**Prefer two-element enum types to boolean parameters**
+
+
+
+
+
+
+
+### Item 52: Use overloading judiciously（明智地使用重载）
+
+
+
+### Item 53: Use varargs judiciously（明智地使用可变参数）
+
+
+
+### Item 54: Return empty collections or arrays, not nulls（返回空集合或数组，而不是 null）
+
+
+
+### Item 55: Return optionals judiciously（明智地的返回 Optional）
+
+
+
+### Item 56: Write doc comments for all exposed API elements（为所有公开的 API 元素编写文档注释）
