@@ -1,0 +1,32 @@
+[
+  {
+    "system": "GGG",
+    "itemList": [
+      {
+        "itemid": "123",
+        "itemDate": "2021-10-10",
+        "itemLive": true
+      },
+      {
+        "itemid": "567",
+        "itemDate": "2021-10-10",
+        "itemLive": true
+      }
+    ]
+  },
+  {
+    "system": "BBB",
+    "itemList": [
+      {
+        "itemid": "123",
+        "itemDate": "2021-10-10",
+        "itemLive": true
+      },
+      {
+        "itemid": "345",
+        "itemDate": "2021-10-10",
+        "itemLive": true
+      }
+    ]
+  }
+]
