@@ -3410,61 +3410,245 @@
 
 1368. mortgage rate    按揭利率
 
-1369. 
+1369. stipulate   v. 规定，明确要求     adj. （叶子，植物）有托叶的，具托叶的
 
-1370. 
+1370. arguments     n. 参数
 
-1371. 
+1371. empirically   adv. 以经验为主地
 
-1372. 
+1372. less-than sign (<) 
 
-1373. 
+1373. greater-than sign (>)
 
-1374. 
+1374. ampersand (&)
 
-1375. 
+1375. pertain   v. 适合，关于，适用；<法律>从属，归属；<正式>（在特定的时间或地点）生效，存在
 
-1376. 
+1376. the third person declarative tense      第三人称陈述句时态
 
-1377. 
+1377. prematurely     adv. 过早地
 
-1378. 
+1378. abruptly    adv. 突然地；唐突地；陡然
 
-1379. 
+1379. indistinguishable     adj. 难以区别的，难以分辨的；不清楚的，无法识别的
 
-1380. 
+1380. legitimate     adj. 正当的，合理的；合法的，依法的；合法婚姻所生的；（君主）有合法王位继承权的；（与音乐喜剧、滑稽剧相对）正剧的
 
-1381. 
+      v. <美>使合法化，使正当化
 
-1382. 
+1381. multiplication    n. 乘法；大量增加
 
-1383. 
+1382. apace    adv. 飞快地，迅速地；急速地
 
-1384. 
+1383. notably    adv. 明显地，显著地；尤其，特别
 
-1385. 
+1384. multiprecision    n. 多精度
 
-1386. 
+1385. thoroughly   adv. 完全地，极度地；仔细地，认真地，彻底地
 
-1387. 
+1386. aphorism  n. 格言；警句
 
-1388. 
+1387. throb    v. （有规律地）抽动；（有节奏地）跳动；抽搐，阵痛；热闹
 
-1389. 
+      n. （强烈有规律的）跳动；抽搐，阵痛
 
-1390. 
+1388. uncharted   adj. 未知的；图上未标明的
 
-1391. 
+1389. out of breath  喘不过气来，上气不接下气
 
-1392. 
+1390. gerund    n. 动名词
 
-1393. 
+1391. direct object   n. 直接宾语；直接客体
 
-1394. 
+1392. pervasive    adj. 弥漫的，遍布的
 
-1395. 
+1393. wire-level protocol    线路层协议
 
-1396. 
+1394. persistent data formats    持久数据格式
+
+1395. Profiling tools    分析工具
+
+1396. profiler    分析器
+
+1397. outright     adj. 完全的，彻底的；公开的，直率的；绝对的，全面的
+
+      adv. 公开地，直率地；完全地，彻底地；立刻，立即；一次付清地
+
+1398. make trade-offs       作出取舍
+
+1399. with the aid of    在……的帮助下，在……援助下
+
+1400. Actual Work Time    awt
+
+1401. instantly    adv. 立刻，马上；<旧>急切地，坚持地
+
+      conj. 一……就……
+
+1402. inhibit    v. 抑制，约束；使拘束，使尴尬；降低（酶等）的活性；禁止（神职人员）司神职
+
+1403. obfuscate    vt. 使模糊；使迷乱；弄暗
+
+1404. concurrently     adv. 兼；同时发生地
+
+1405. state transitions   [计] 状态转换
+
+1406. cardinal     n. 红衣主教；基数，纯数；红衣凤头鸟；猩红，鲜红
+
+      adj. 最主要的，基本的
+
+1407. potent     adj. 强大的，有力的；（毒品、药品或化学品）药效强的，强效的；（男子）有性功能的；由T字形构成的，（尤指十字架）有T形端的；（纹章装饰）有交错T形拼花毛皮的；有说服力的
+
+      n. 有交错T形拼花的毛皮
+
+1408. disregard     v. 忽视，轻视，不尊重       n. 漠视，轻视
+
+1409. precondition     n. 前提；先决条件      vt. 预处理；事先准备
+
+1410. relay    v. 传递，传达（信息、新闻等）；中继转发，转播（广播或电视信号）；重铺，重新铺设（过去式和过去分词形式 relaid）
+
+      n. 接力赛；接班的人（或动物），轮换者；传递，传送；中继设备；继电器；中继转播的信息（或节目）；传输系统，传送系统
+
+1411. sparingly    adv. 一点点，俭省地
+
+1412. disconcerting    adj. 令人不安的；打扰人的
+
+1413. reproducible    adj. 可再生的；可繁殖的；可复写的
+
+1414. pertinent     adj. 切题的，相关的
+
+1415. glean   vt. 收集（资料）；拾（落穗）   vi. 收集；拾落穗
+
+1416. intelligible     adj. 可理解的，明白易懂的；只能凭智力理解的
+
+1417. redundantly     adv. 多余地
+
+1418. ubiquitous     adj. 普遍存在的，无所不在的
+
+1419. dispense with     无需；免除；省掉
+
+1420. hoisting     n. 提升；起重
+
+1421. increment operator (++)  
+
+1422. increment    n. <正式>（尤指连续、定量的）增长；<正式>工资定量增长，定量加薪；（变量、函数的）正（或负）增量
+
+      v. （计算机）使（数字值）各自增加
+
+1423. interleave  v. 交错；插空白页于；插叙
+
+1424. intermittent     adj. 间歇的，断断续续的
+
+1425. contrived    adj. 人为的；做作的；不自然的
+
+1426. reentrant    adj. 再进去的；凹角的
+
+      n. 凹角；再进入
+
+1427. tailor-made    adj. 特制的；裁缝制的
+
+1428. contention    n. 看法，观点；争论，争吵；争夺，竞争
+
+1429. supplant  v. 取代，代替
+
+1430. enqueue     vt. 排队；入队；队列
+
+1431. asynchronous     adj. [电] 异步的；不同时的；不同期的
+
+1432. periodically     adv. 定期地，周期性地；偶尔，间歇
+
+1433. latency    n. 潜伏；潜在因素
+
+1434. simulate    v. 假装，冒充；模拟，模仿；看上去像；计算机模拟
+
+      adj. <古> 虚假的，假装的
+
+1435. latch   n. 门闩，窗闩；<英>碰锁，碰簧锁；（电子）门闩线路，锁存器
+
+      v. 闩上（门），用弹簧锁锁住（门等）；（电子）（装置）状态恒定；占有，抓住
+
+1436. worker thread    工作线程；辅助线程；背景工作线程
+
+1437. notoriously     adv. 众所周知地，声名狼藉地
+
+1438. indefinitely    adv. 无限期地，不确定地；（细节）不清楚地，模糊粗略地
+
+1439. recipient      n. <正式>接受者，领受者；接收器，容器       adj. 接受的，容纳的
+
+1440. insufficient      adj. 不充分的，不够重要的
+
+1441. hostility     n. 敌意，对抗；强烈的反对，愤怒反抗；战斗，战争行动
+
+1442. taxonomy      n. 分类学；分类法
+
+1443. inadvertently     adv. 无意地，不经意地
+
+1444. dispatching overhead  调度开销
+
+1445. Proponent     n. <正式>支持者，建议者；提出认证遗嘱者
+
+1446. gadget     n. 小器具，小玩意儿
+
+1447. confusion     n. 困惑，不明确；混淆，混同；慌乱，窘迫；混乱局面，乱成一团
+
+1448. inception    n. （机构、组织等的）开端，创始
+
+1449. granularity    n. 间隔尺寸，[岩] 粒度
+
+1450. specious    adj. 似是而非的；外表美观的；华而不实的；徒有其表的
+
+1451. fabricate    v. 制造，生产；捏造，编造；组装，装配
+
+1452. all bets are off    世事难料
+
+1453. verbatim     adv. 一字不差地，逐字地      adj. 一字不差的，逐字的
+
+1454. invariably    adv. 始终如一地，一贯地
+
+1455. 
+
+1456. 
+
+1457. 
+
+1458. 
+
+1459. 
+
+1460. 
+
+1461. 
+
+1462. 
+
+1463. 
+
+1464. 
+
+1465. 
+
+1466. 
+
+1467. 
+
+1468. 
+
+1469. 
+
+1470. 
+
+1471. 
+
+1472. 
+
+1473. 
+
+1474. 
+
+1475. 
+
+1476. 
+
+1477. 
 
 
 

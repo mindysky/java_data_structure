@@ -2049,6 +2049,10 @@ The larger the product of *N\*Q*, the more likely we are to get a performance bo
 
 **As the number of computations increases, the data size required to get a performance boost from parallelism decreases.**
 
+
+
+## Chapter 8
+
 ### Item 49: Check parameters for validity
 
 program principle: 编程思想, 就是 **Fail-fast**   :  
@@ -2275,24 +2279,981 @@ There are three techniques for shortening overly long parameter lists
 
 
 
-
-
-
-
 ### Item 52: Use overloading judiciously（明智地使用重载）
 
+**the choice of which overloading to invoke is made at compile time**
 
+**selection among overloaded methods is static, while selection among overridden methods is dynamic**
+
+ **A safe, conservative policy is never to export two overloadings with the same number of parameters.** 
+
+**you can always give methods different names instead of overloading them**
+
+**do not overload methods to take different functional interfaces in the same argument position.**
 
 ### Item 53: Use varargs judiciously（明智地使用可变参数）
+
+Varargs methods, formally known as variable arity methods
+
+```java
+// The right way to use varargs to pass one or more arguments
+static int min(int firstArg, int... remainingArgs) {
+    int min = firstArg;
+    for (int arg : remainingArgs)
+        if (arg < min)
+    min = arg;
+    return min;
+}
+```
+
+Exercise care when using varargs in performance-critical situations. Every invocation of a varargs method causes an array allocation and initialization. If you have determined empirically that you can’t afford this cost but you need the flexibility of varargs, there is a pattern that lets you have your cake and eat it too. 
+
+```java
+//declare five overloadings of the method, one each with zero through three ordinary parameters
+public void foo() { }
+public void foo(int a1) { }
+public void foo(int a1, int a2) { }
+public void foo(int a1, int a2, int a3) { }
+public void foo(int a1, int a2, int a3, int... rest) { }
+```
 
 
 
 ### Item 54: Return empty collections or arrays, not nulls（返回空集合或数组，而不是 null）
 
+```java
+// Optimization - avoids allocating empty collections
+public List<Cheese> getCheeses() {
+    return cheesesInStock.isEmpty() ? Collections.emptyList(): new ArrayList<>(cheesesInStock);
+}
+
+// Collections.emptySet
+// Collections.emptyMap
+```
+
 
 
 ### Item 55: Return optionals judiciously（明智地的返回 Optional）
 
+Prior to Java 8, there were two approaches you could take when writing a method that was unable to return a value under certain circumstances. Either you could throw an exception, or you could return null (assuming the return type was an object reference type).
+
+Exceptions should be reserved for exceptional conditions (Item 69), and throwing an exception is expensive because the entire stack trace is captured when an exception is created
+
+
+
+The `Optional<T>` class represents an immutable container that can hold either a single non-null T reference or nothing at all.
+
+```java
+The Optional<T> class represents an immutable container 
+    
+    
+    // Returns maximum value in collection - throws exception if empty
+public static <E extends Comparable<E>> E max(Collection<E> c) {
+    if (c.isEmpty())
+        throw new IllegalArgumentException("Empty collection");
+    E result = null;
+    for (E e : c)
+        if (result == null || e.compareTo(result) > 0)
+    result = Objects.requireNonNull(e);
+    return result;
+}
+    
+    // Returns maximum value in collection as an Optional<E>
+public static <E extends Comparable<E>> Optional<E> max(Collection<E> c) {
+    if (c.isEmpty())
+        return Optional.empty();
+    E result = null;
+    for (E e : c)
+        if (result == null || e.compareTo(result) > 0)
+    result = Objects.requireNonNull(e);
+    return Optional.of(result);
+}
+```
+
+Optional.empty()
+
+Optional.of(value) returns an optional containing the given non-null value
+
+Optional.ofNullable(value)
+
+**Never return a null value from an Optional-returning method**
+
+
+
+```java
+// Using an optional to provide a chosen default value
+String lastWordInLexicon = max(words).orElse("No words...");
+
+
+// Using an optional to throw a chosen exception
+Toy myToy = max(toys).orElseThrow(TemperTantrumException::new);
+
+//Java 8
+streamOfOptionals.filter(Optional::isPresent).map(Optional::get)
+//Java 9
+streamOfOptionals..flatMap(Optional::stream)
+```
+
+**Container types, including collections, maps, streams, arrays, and optionals should not be wrapped in optionals**
+
+As a rule, **you should declare a method to return `Optional<T>` if it might not be able to return a result and clients will have to perform special processing if no result is returned.**
+
+ returning an `Optional<T>` is not without cost. An Optional is an object that has to be allocated and initialized, and reading the value out of the optional requires an extra indirection. 
+
+OptionalInt, OptionalLong, and OptionalDouble
+
+**you should never return an optional of a boxed primitive type**
+
+**it is almost never appropriate to use an optional as a key, value, or element in a collection or array.**
+
 
 
 ### Item 56: Write doc comments for all exposed API elements（为所有公开的 API 元素编写文档注释）
+
+**To document your API properly, you must precede every exported class, interface, constructor, method, and field declaration with a doc comment**
+
+**The doc comment for a method should describe succinctly the contract between the method and its client.** 
+
+```java
+/**
+* Returns the element at the specified position in this list.
+**
+<p>This method is <i>not</i> guaranteed to run in constant
+* time. In some implementations it may run in time proportional
+* to the element position.
+**
+@param index index of element to return; must be
+* non-negative and less than the size of this list
+* @return the element at the specified position in this list
+* @throws IndexOutOfBoundsException if the index is out of range
+* ({@code index < 0 || index >= this.size()})
+*/
+E get(int index);
+
+
+/**
+* Returns true if this collection is empty.
+**
+@implSpec
+* This implementation returns {@code this.size() == 0}.
+**
+@return true if this collection is empty
+*/
+public boolean isEmpty() { ... }
+```
+
+**doc comments should be readable both in the source code and in the generated documentation**
+
+**no two members or constructors in a class or interface should have the same summary description.** 
+
+
+
+**When documenting a generic type or method, be sure to document all type parameters:**
+
+```java
+/**
+* An object that maps keys to values. A map cannot contain
+* duplicate keys; each key can map to at most one value.
+**
+(Remainder omitted)
+**
+@param <K> the type of keys maintained by this map
+* @param <V> the type of mapped values
+*/
+public interface Map<K, V> { ... }
+```
+
+**When documenting an enum type, be sure to document the constants** as well as the type and any public methods.
+
+```java
+/**
+* An instrument section of a symphony orchestra.
+*/
+public enum OrchestraSection {
+/** Woodwinds, such as flute, clarinet, and oboe. */
+WOODWIND,
+/** Brass instruments, such as french horn and trumpet. */
+BRASS,
+/** Percussion instruments, such as timpani and cymbals. */
+PERCUSSION,
+/** Stringed instruments, such as violin and cello. */
+STRING;
+}
+```
+
+**When documenting an annotation type, be sure to document any Members** as well as the type itself. 
+
+```java
+/**
+* Indicates that the annotated method is a test method that
+* must throw the designated exception to pass.
+*/
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface ExceptionTest {
+/**
+* The exception that the annotated test method must throw
+* in order to pass. (The test is permitted to throw any
+* subtype of the type described by this class object.)
+*/
+Class<? extends Throwable> value();
+}
+```
+
+
+
+## Chapter 9. General Programming
+
+### Item 57: Minimize the scope of local variables
+
+**The most powerful technique for minimizing the scope of a local variable is to declare it where it is first used.** 
+
+**Nearly every local variable declaration should contain an initializer.** 
+
+The for loop has one more advantage over the while loop: it is shorter, which enhances readability
+
+```java
+for (int i = 0, n = expensiveComputation(); i < n; i++) {
+    ... // Do something with i;
+}
+```
+
+A final technique to minimize the scope of local variables is to keep methods small and focused
+
+### Item 58: Prefer for-each loops to traditional for loops（for-each 循环优于传统的 for 循环）
+
+for-each loop (officially known as the “enhanced for statement”)
+
+```java
+// The preferred idiom for iterating over collections and arrays
+for (Element e : elements) {
+    ... // Do something with e
+}
+
+
+// Preferred idiom for nested iteration on collections and arrays
+for (Suit suit : suits)
+for (Rank rank : ranks)
+deck.add(new Card(suit, rank));
+```
+
+there are three common situations where you can’t use foreach:
+
+- **Destructive filtering** —If you need to traverse a collection removing selected elements, then you need to use an explicit iterator so that you can call its remove method. You can often avoid explicit traversal by using Collection’s removeIf method, added in Java 8.
+- **Transforming** —If you need to traverse a list or array and replace some or all of the values of its elements, then you need the list iterator or array index in order to replace the value of an element.
+- **Parallel iteration** —If you need to traverse multiple collections in parallel, then you need explicit control over the iterator or index variable so that all iterators or index variables can be advanced in lockstep (as demonstrated unintentionally in the buggy card and dice examples above). If you find yourself in any of these situations, use an ordinary for loop and be wary of the traps mentioned in this item.
+
+### Item 59: Know and use the libraries
+
+**By using a standard library, you take advantage of the knowledge of the experts who wrote it and the experience of those who used it before you.**
+
+**the random number generator of choice is now ThreadLocalRandom**
+
+For fork join pools and parallel streams, use SplittableRandom.
+
+A second advantage of using the libraries is that you don’t have to waste your time writing ad hoc solutions to problems that are only marginally related to your work.
+
+A third advantage of using standard libraries is that their performance tends to improve over time, with no effort on your part.
+
+A fourth advantage of using libraries is that they tend to gain functionality over time.
+
+A final advantage of using the standard libraries is that you place your code in the mainstream.
+
+**Numerous features are added to the libraries in every major release, and it pays to keep abreast of these additions.** 
+
+**every programmer should be familiar with the basics of java.lang, java.util, and java.io, and their subpackages**
+
+
+
+### Item 60: Avoid float and double if exact answers are required
+
+**The float and double types are particularly ill-suited for monetary calculations**
+
+**use BigDecimal, int, or long for monetary calculations**
+
+In summary, don’t use float or double for any calculations that require an exact answer. Use BigDecimal if you want the system to keep track of the decimal point and you don’t mind the inconvenience and cost of not using a primitive type. Using BigDecimal has the added advantage that it gives you full control over rounding, letting you select from eight rounding modes whenever an operation that entails rounding is performed. This comes in handy if you’re performing business calculations with legally mandated rounding behavior. If performance is of the essence, you don’t mind keeping track of the decimal point yourself, and the quantities aren’t too big, use int or long. If the quantities don’t exceed nine decimal digits, you can use int; if they don’t exceed eighteen digits, you can use long. If the quantities might exceed eighteen digits, use BigDecimal.
+
+### Item 61: Prefer primitive types to boxed primitives
+
+primitives ：   int, double, and boolean
+
+reference types：   String and List.
+
+The boxed primitives corresponding to int, double, and boolean are Integer, Double, and Boolean.
+
+
+
+ three major differences between primitives and boxed primitives：
+
+ First, primitives have only their values, whereas boxed primitives have identities distinct from their values. 
+
+Second, primitive types have only fully functional values, whereas each boxed primitive type has one nonfunctional value, which is null, in addition to all the functional values of the corresponding primitive type.
+
+Last, primitives are more time and space efficient than boxed primitives. 
+
+**Applying the == operator to boxed primitives is almost always wrong.**
+
+**when you mix primitives and boxed primitives in an operation, the boxed primitive is auto-unboxed.** 
+
+ **Autoboxing reduces the verbosity, but not the danger, of using boxed primitives.**
+
+### Item 62: Avoid strings where other types are more appropriate
+
+**Strings are poor substitutes for other value types.** 
+
+**Strings are poor substitutes for enum types.**
+
+- enums make far better enumerated type constants than strings.
+
+**Strings are poor substitutes for aggregate types.**
+
+- A better approach is simply to write a class to represent the aggregate, often a private static member class (Item 24).
+
+**Strings are poor substitutes for capabilities.**
+
+Types for which strings are commonly misused include primitive types, enums, and aggregate types.
+
+### Item 63: Beware the performance of string concatenation
+
+Using **the string concatenation operator repeatedly to concatenate n strings requires time quadratic in n.** 
+
+使用 **字符串串联运算符重复串联 n 个字符串需要 n 的平方级时间**
+
+**To achieve acceptable performance, use a StringBuilder in place of a String** to store the statement under construction:
+
+**Don’t use the string concatenation operator to combine more than a few strings** 
+
+### Item 64: Refer to objects by their interfaces
+
+ **If appropriate interface types exist, then parameters, return values, variables, and fields should all be declared using interface types.**
+
+**If you get into the habit of using interfaces as types, your program will be much more flexible.** 
+
+**It is entirely appropriate to refer to an object by a class rather than an interface if no appropriate interface exists.** 
+
+**If there is no appropriate interface, just use the least specific class in the class hierarchy that provides the required functionality.**
+
+### Item 65: Prefer interfaces to reflection
+
+- **You lose all the benefits of compile-time type checking,** including exception checking. If a program attempts to invoke a nonexistent or inaccessible method reflectively, it will fail at runtime unless you’ve taken special precautions.
+- **The code required to perform reflective access is clumsy and verbose.** It is tedious to write and difficult to read.
+- **Performance suffers.** Reflective method invocation is much slower than normal method invocation. Exactly how much slower is hard to say, as there are many factors at work. On my machine, invoking a method with no input parameters and an int return was eleven times slower when done reflectively.
+
+**You can obtain many of the benefits of reflection while incurring few of its costs by using it only in a very limited form.** 
+
+If you are writing a program that has to work with classes unknown at compile time, you should, if at all possible, use reflection only to instantiate objects, and access the objects using some interface or superclass that is known at compile time.
+
+### Item 66: Use native methods judiciously
+
+Native methods are used to write performance-critical parts of applications in native languages for improved performance.
+
+**It is rarely advisable to use native methods for improved performance.** I
+
+decrease performance    降低性能
+
+It is rare that you need to use them for improved performance. If you must use native methods to access low-level resources or native libraries, use as little native code as possible and test it thoroughly.
+
+A single bug in the native code can corrupt your entire application.
+
+### Item 67: Optimize judiciously
+
+ **good programs rather than fast ones.** 
+
+**Strive to avoid design decisions that limit performance.** 
+
+**Consider the performance consequences of your API design decisions.** 
+
+ **It is a very bad idea to warp an API to achieve good performance.** 
+
+**measure performance before and after each attempted optimization.** 
+
+The first step is to examine your choice of algorithms: no amount of low-level optimization can make up for a poor choice of algorithm. Repeat this process as necessary, measuring the performance after every change, until you’re satisfied.
+
+### Item 68: Adhere to generally accepted naming conventions
+
+naming conventions fall into two categories: typographical and grammatical.
+
+Package and module names should be hierarchical with the components separated by periods.
+
+The name of any package that will be used outside your organization should begin with your organization’s Internet domain name with the components reversed, for example, edu.cmu, com.google
+
+Components should be short, generally eight or fewer characters.
+
+util rather than utilities
+
+ first letter capitalized
+
+constant fields：
+
+ whose names should consist of one or more uppercase words separated by the underscore character, for example, VALUES or NEGATIVE_INFINITY.
+
+Type parameter names usually consist of a single letter. 
+
+T for an arbitrary type, E for the element type of a collection, K and V for the key and value types of a map, and X for an exception.
+
+For quick reference, the following table shows examples of typographical conventions.
+
+| Identifier Type    | Example                                              |
+| ------------------ | ---------------------------------------------------- |
+| Package or module  | `org.junit.jupiter.api`, `com.google.common.collect` |
+| Class or Interface | Stream, FutureTask, LinkedHashMap,HttpClient         |
+| Method or Field    | remove, groupingBy, getCrc                           |
+| Constant Field     | MIN_VALUE, NEGATIVE_INFINITY                         |
+| Local Variable     | i, denom, houseNum                                   |
+| Type Parameter     | T, E, K, V, X, R, U, V, T1, T2                       |
+
+Instantiable classes, including enum types, are generally named with a singular noun or noun phrase, such as Thread, PriorityQueue, or ChessPiece.
+
+Non-instantiable utility classes (Item 4) are often named with a plural noun, such as Collectors or Collections.
+
+Interfaces are named like classes, for example, Collection or Comparator, or with an adjective ending in able or ible, for example, Runnable, Iterable, or Accessible.
+
+Instance methods that convert the type of an object, returning an independent object of a different type, are often called toType, for example, toString or toArray
+
+Methods that return a view (Item 6) whose type differs from that of the receiving object are often called asType, for example, asList. 
+
+Methods that return a primitive with the same value as the object on which they’re invoked are often called typeValue, for example, intValue.
+
+Common names for static factories include from, of, valueOf, instance, getInstance, newInstance, getType, and newType.
+
+## Chapter 10. Exceptions
+
+best advantage, exceptions can improve a program’s readability, reliability, and maintainability. 
+
+### Item 69: Use exceptions only for exceptional conditions
+
+**Exceptions are, as their name implies, to be used only for exceptional conditions; they should never be used for ordinary control flow.** 
+
+- Because exceptions are designed for exceptional circumstances, there is little incentive for JVM implementors to make them as fast as explicit tests.
+- Placing code inside a try-catch block inhibits certain optimizations that JVM implementations might otherwise perform.
+- The standard idiom for looping through an array doesn’t necessarily result in redundant checks. Many JVM implementations optimize them away.
+
+ **A well-designed API must not force its clients to use exceptions for ordinary control flow.**
+
+ For example, the Iterator interface has the state-dependent method next and the corresponding state-testing method hasNext. This enables the standard idiom for iterating over a collection with a traditional for loop (as well as the for-each loop, where the hasNext method is used internally):
+
+### Item 70: Use checked exceptions for recoverable conditions and runtime exceptions for programming errors
+
+Java provides three kinds of throwables: checked exceptions, runtime exceptions, and errors.
+
+**use checked exceptions for conditions from which the caller can reasonably be expected to recover.** 
+
+There are two kinds of unchecked throwables: runtime exceptions and errors. 
+
+If a program throws an unchecked exception or an error, it is generally the case that recovery is impossible and continued execution would do more harm than good. 
+
+**Use runtime exceptions to indicate programming errors.** 
+
+**all of the unchecked throwables you implement should subclass RuntimeException** (directly or indirectly).
+
+Provide methods on your checked exceptions to aid in recovery.
+
+### Item 71: Avoid unnecessary use of checked exceptions
+
+### Item 72: Favor the use of standard exceptions
+
+The most commonly reused exception type is IllegalArgumentException
+
+Another commonly reused exception is IllegalStateException. 
+
+Another reusable exception is ConcurrentModificationException. 
+
+A last standard exception of note is UnsupportedOperationException. 
+
+**Do not reuse Exception, RuntimeException, Throwable, or Error directly.** 
+
+| Exception                       | Occasion for Use                                             |
+| ------------------------------- | ------------------------------------------------------------ |
+| IllegalArgumentException        | Non-null parameter value is inappropriate（非空参数值不合适） |
+| IllegalStateException           | Object state is inappropriate for method invocation（对象状态不适用于方法调用） |
+| NullPointerException            | Parameter value is null where prohibited（禁止参数为空时仍传入 null） |
+| IndexOutOfBoundsException       | Index parameter value is out of range（索引参数值超出范围）  |
+| ConcurrentModificationException | Concurrent modification of an object has been detected where it is prohibited（在禁止并发修改对象的地方检测到该动作） |
+| UnsupportedOperationException   | Object does not support method（对象不支持该方法调用）       |
+
+### Item 73: Throw exceptions appropriate to the abstraction
+
+**higher layers should catch lower-level exceptions and, in their place, throw exceptions that can be explained in terms of the higher-level abstraction.** 
+
+This idiom is known as exception translation
+
+```java
+// Exception Translation
+try {
+    ... // Use lower-level abstraction to do our bidding
+} catch (LowerLevelException e) {
+    throw new HigherLevelException(...);
+}
+
+
+/**
+* Returns the element at the specified position in this list.
+* @throws IndexOutOfBoundsException if the index is out of range
+* ({@code index < 0 || index >= size()}).
+*/
+public E get(int index) {
+    ListIterator<E> i = listIterator(index);
+    try {
+        return i.next();
+    }
+    catch (NoSuchElementException e) {
+        throw new IndexOutOfBoundsException("Index: " + index);
+    }
+}
+```
+
+A special form of exception translation called exception chaining is called for in cases where the lower-level exception might be helpful to someone debugging the problem that caused the higher-level exception. 
+
+```java
+// Exception Chaining
+try {
+    ... // Use lower-level abstraction to do our bidding
+}
+catch (LowerLevelException cause) {
+    throw new HigherLevelException(cause);
+}
+
+
+// Exception with chaining-aware constructor
+class HigherLevelException extends Exception {
+    HigherLevelException(Throwable cause) {
+        super(cause);
+    }
+}
+```
+
+**While exception translation is superior to mindless propagation of exceptions from lower layers, it should not be overused.** 
+
+### Item 74: Document all exceptions thrown by each method
+
+**Always declare checked exceptions individually, and document precisely the conditions under which each one is thrown** using the Javadoc @throws tag. 
+
+**Use the Javadoc @throws tag to document each exception that a method can throw, but do not use the throws keyword on unchecked exceptions.** 
+
+**If an exception is thrown by many methods in a class for the same reason, you can document the exception in the class’s documentation comment** rather than documenting it individually for each method. 
+
+document every exception that can be thrown by each method that you write. This is true for unchecked as well as checked exceptions, and for abstract as well as concrete methods. 
+
+### Item 75: Include failure capture information in detail messages
+
+**To capture a failure, the detail message of an exception should contain the values of all parameters and fields that contributed to the exception.** 
+
+**do not include passwords, encryption keys, and the like in detail messages.**
+
+```java
+/**
+* Constructs an IndexOutOfBoundsException.
+**
+@param lowerBound the lowest legal index value
+* @param upperBound the highest legal index value plus one
+* @param index the actual index value
+*/
+public IndexOutOfBoundsException(int lowerBound, int upperBound, int index) {
+    // Generate a detail message that captures the failure
+    super(String.format("Lower bound: %d, Upper bound: %d, Index: %d",lowerBound, upperBound, index));
+    // Save failure information for programmatic access
+    this.lowerBound = lowerBound;
+    this.upperBound = upperBound;
+    this.index = index;
+}
+```
+
+
+
+### Item 76: Strive for failure atomicity（尽力保证故障原子性）
+
+**Generally speaking, a failed method invocation should leave the object in the state that it was in prior to the invocation.** 
+
+There are several ways to achieve this effect. 
+
+1. The simplest is to design immutable objects (Item 17). 
+2. For methods that operate on mutable objects, the most common way to achieve failure atomicity is to check parameters for validity before performing the operation (Item 49). 
+3. A closely related approach to achieving failure atomicity is to order the computation so that any part that may fail takes place before any part that modifies the object.
+4. A third approach to achieving failure atomicity is to perform the operation on a temporary copy of the object and to replace the contents of the object with the temporary copy once the operation is complete. 
+5. A last and far less common approach to achieving failure atomicity is to write recovery code that intercepts a failure that occurs in the midst of an operation, and causes the object to roll back its state to the point before the operation began. 
+
+ as a rule, any generated exception that is part of a method’s specification should leave the object in the same state it was in prior to the method invocation.
+
+### Item 77: Don’t ignore exceptions
+
+**An empty catch block defeats the purpose of exceptions,** 
+
+**If you choose to ignore an exception, the catch block should contain a comment explaining why it is appropriate to do so, and the variable should be named ignored**
+
+
+
+## Chapter 11. Concurrency
+
+### Item 78: Synchronize access to shared mutable data（对共享可变数据的同步访问）
+
+The synchronized keyword ensures that only a single thread can execute a method or block at one time. 
+
+**Synchronization is required for reliable communication between threads as well as for mutual exclusion.**
+
+**Do not use Thread.stop.** 
+
+```java
+// Properly synchronized cooperative thread termination
+public class StopThread {
+    private static boolean stopRequested;
+
+    private static synchronized void requestStop() {
+        stopRequested = true;
+    }
+
+    private static synchronized boolean stopRequested() {
+        return stopRequested;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread backgroundThread = new Thread(() -> {
+            int i = 0;
+            while (!stopRequested())
+            i++;
+        });
+
+        backgroundThread.start();
+        TimeUnit.SECONDS.sleep(1);
+        requestStop();
+    }
+}
+```
+
+ **Synchronization is not guaranteed to work unless both read and write operations are synchronized.** 
+
+```java
+// Cooperative thread termination with a volatile field
+public class StopThread {
+    private static volatile boolean stopRequested;
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread backgroundThread = new Thread(() -> {
+        int i = 0;
+        while (!stopRequested)
+            i++;
+    });
+
+    backgroundThread.start();
+    TimeUnit.SECONDS.sleep(1);
+    stopRequested = true;
+    }
+}
+```
+
+
+
+**confine mutable data to a single thread.** 
+
+There are many ways to safely publish an object reference: you can store it in a static field as part of class initialization; you can store it in a volatile field, a final field, or a field that is accessed with normal locking; or you can put it into a concurrent collection
+
+**when multiple threads share mutable data, each thread that reads or writes the data must perform synchronization.** 
+
+### Item 79: Avoid excessive synchronization（避免过度同步）
+
+**To avoid liveness and safety failures, never cede control to the client within a synchronized method or block.**
+
+**As a rule, you should do as little work as possible inside synchronized regions.** 
+
+lock splitting, lock striping, and nonblocking concurrency control.
+
+to avoid deadlock and data corruption, never call an alien method from within a synchronized region. 
+
+### Item 80: Prefer executors, tasks, and streams to threads（Executor、task、流优于直接使用线程）
+
+```java
+ExecutorService exec = Executors.newSingleThreadExecutor();
+
+Here is how to submit a runnable for execution:
+exec.execute(runnable);
+
+And here is how to tell the executor to terminate gracefully (if you fail to do this,it is likely that your VM will not exit):
+exec.shutdown();
+```
+
+For a small program, or a lightly loaded server, Executors.newCachedThreadPool is generally a good choice because it demands no configuration and generally “does the right thing.”
+
+In a heavily loaded production server, you are much better off using Executors.newFixedThreadPool, which gives you a pool with a fixed number of threads, or using the ThreadPoolExecutor class directly, for maximum control.
+
+### Item 81: Prefer concurrency utilities to wait and notify（并发实用工具优于 wait 和 notify）
+
+**Given the difficulty of using wait and notify correctly, you should use the higher-level concurrency utilities instead.**
+
+The higher-level utilities in java.util.concurrent fall into three categories: the Executor Framework, which was covered briefly in Item 80; concurrent collections; and synchronizers.
+
+**it is impossible to exclude concurrent activity from a concurrent collection; locking it will only slow the program.**
+
+ **use ConcurrentHashMap in preference to Collections.synchronizedMap.**
+
+ Simply replacing synchronized maps with concurrent maps can dramatically increase the performance of concurrent applications.
+
+Synchronizers are objects that enable threads to wait for one another, allowing them to coordinate their activities. 
+
+The most commonly used synchronizers are CountDownLatch and Semaphore. 
+
+Less commonly used are CyclicBarrier and Exchanger. 
+
+The most powerful synchronizer is Phaser.
+
+**For interval timing, always use System.nanoTime rather than System.currentTimeMillis.**
+
+standard idiom for using the wait method: 
+
+```java
+// The standard idiom for using the wait method
+synchronized (obj) {
+    while (<condition does not hold>)
+        obj.wait(); // (Releases lock, and reacquires on wakeup)
+    ... // Perform action appropriate to condition
+}
+```
+
+**Always use the wait loop idiom to invoke the wait method; never invoke it outside of a loop.**
+
+There are several reasons a thread might wake up when the condition does not hold:
+
+- Another thread could have obtained the lock and changed the guarded state between the time a thread invoked notify and the waiting thread woke up.
+- Another thread could have invoked notify accidentally or maliciously when the condition did not hold. Classes expose themselves to this sort of mischief by waiting on publicly accessible objects. Any wait in a synchronized method of a publicly accessible object is susceptible to this problem.
+- The notifying thread could be overly “generous” in waking waiting threads. For example, the notifying thread might invoke notifyAll even if only some of the waiting threads have their condition satisfied.
+- The waiting thread could (rarely) wake up in the absence of a notify. This is known as a spurious wakeup
+
+**There is seldom, if ever, a reason to use wait and notify in new code.**
+
+### Item 82: Document thread safety（文档应包含线程安全属性）
+
+**The presence of the synchronized modifier in a method declaration is an implementation detail, not a part of its API.**
+
+**To enable safe concurrent use, a class must clearly document what level of thread safety it supports.** 
+
+- **Immutable** —Instances of this class appear constant. No external synchronization is necessary. Examples include String, Long, and BigInteger (Item 17).
+- **Unconditionally thread-safe** —Instances of this class are mutable, but the class has sufficient internal synchronization that its instances can be used concurrently without the need for any external synchronization. Examples include AtomicLong and ConcurrentHashMap.
+- **Conditionally thread-safe** —Like unconditionally thread-safe, except that some methods require external synchronization for safe concurrent use. Examples include the collections returned by the Collections.synchronized wrappers, whose iterators require external synchronization.
+- **Not thread-safe** —Instances of this class are mutable. To use them concurrently, clients must surround each method invocation (or invocation sequence) with external synchronization of the clients’ choosing. Examples include the general-purpose collection implementations, such as ArrayList and HashMap.
+- **Thread-hostile** —This class is unsafe for concurrent use even if every method invocation is surrounded by external synchronization. Thread hostility usually results from modifying static data without synchronization. No one writes a thread-hostile class on purpose; such classes typically result from the failure to consider concurrency. When a class or method is found to be thread-hostile, it is typically fixed or deprecated. The generateSerialNumber method in Item 78 would be thread-hostile in the absence of internal synchronization, as discussed on page 322.
+
+
+
+ **Lock fields should always be declared final.**
+
+The private lock object idiom can be used only on unconditionally thread-safe classes. 
+
+ every class should clearly document its thread safety properties with a carefully worded prose description or a thread safety annotation. 
+
+### Item 83: Use lazy initialization judiciously（明智地使用延迟初始化）
+
+As is the case for most optimizations, the best advice for lazy initialization is “don’t do it unless you need to” 
+
+**Under most circumstances, normal initialization is preferable to lazy initialization.** 
+
+**If you use lazy initialization to break an initialization circularity, use a synchronized accessor** 
+
+**If you need to use lazy initialization for performance on a static field, use the lazy initialization holder class idiom.** 
+
+```java
+// Lazy initialization holder class idiom for static fields
+private static class FieldHolder {
+    static final FieldType field = computeFieldValue();
+}
+private static FieldType getField() { return FieldHolder.field; }
+```
+
+**If you need to use lazy initialization for performance on an instance field, use the double-check idiom.** 
+
+```java
+// Double-check idiom for lazy initialization of instance fields
+private volatile FieldType field;
+private FieldType getField() {
+    FieldType result = field;
+    if (result == null) { // First check (no locking)
+        synchronized(this) {
+            if (field == null) // Second check (with locking)
+                field = result = computeFieldValue();
+        }
+    }
+    return result;
+}
+```
+
+
+
+### Item 84: Don’t depend on the thread scheduler（不要依赖线程调度器）
+
+**Any program that relies on the thread scheduler for correctness or performance is likely to be nonportable.**
+
+**Threads should not run if they aren’t doing useful work.** 
+
+**resist the temptation to “fix” the program by putting in calls to Thread.yield.** 
+
+ **Thread.yield has no testable semantics.** 
+
+**Thread priorities are among the least portable features of Java.** 
+
+
+
+## Chapter 12. Serialization
+
+### Item 85: Prefer alternatives to Java serialization（优先选择 Java 序列化的替代方案）
+
+RMI (Remote Method Invocation)
+
+ JMX (Java Management Extension)
+
+ JMS (Java Messaging System). 
+
+Deserialization of untrusted streams can result in remote code execution (RCE), denial-of-service (DoS)
+
+**The best way to avoid serialization exploits is never to deserialize anything.** 
+
+**There is no reason to use Java serialization in any new system you write.** 
+
+The most significant differences between JSON and protobuf are that JSON is text-based and human-readable, whereas protobuf is binary and substantially more efficient; 
+
+**never deserialize untrusted data.**
+
+**Prefer whitelisting to blacklisting,** 
+
+serialization is dangerous and should be avoided.
+
+### Item 86: Implement Serializable with great caution
+
+**A major cost of implementing Serializable is that it decreases the flexibility to change a class’s implementation once it has been released.**
+
+A simple example of the constraints on evolution imposed by serializability concerns stream unique identifiers, more commonly known as serial version UIDs. Every serializable class has a unique identification number associated with it. If you do not specify this number by declaring a static final long field named serialVersionUID, the system automatically generates it at runtime by applying a cryptographic hash function (SHA-1) to the structure of the class. This value is affected by the names of the class, the interfaces it implements, and most of its members, including synthetic members generated by the compiler. If you change any of these things, for example, by adding a convenience method, the generated serial version UID changes. If you fail to declare a serial version UID, compatibility will be broken, resulting in an InvalidClassException at runtime.
+
+**A second cost of implementing Serializable is that it increases the likelihood of bugs and security holes**
+
+**A third cost of implementing Serializable is that it increases the testing burden associated with releasing a new version of a class.** 
+
+**Implementing Serializable is not a decision to be undertaken lightly.** 
+
+**Classes designed for inheritance (Item 19) should rarely implement Serializable, and interfaces should rarely extend it.** 
+
+```java
+// readObjectNoData for stateful extendable serializable classes
+private void readObjectNoData() throws InvalidObjectException {
+    throw new InvalidObjectException("Stream data required");
+}
+```
+
+**Inner classes (Item 24) should not implement Serializable.** 
+
+### Item 87: Consider using a custom serialized form
+
+**Do not accept the default serialized form without first considering whether it is appropriate.** 
+
+**The default serialized form is likely to be appropriate if an object’s physical representation is identical to its logical content.**
+
+```java
+// Good candidate for default serialized form
+public class Name implements Serializable {
+    /**
+    * Last name. Must be non-null.
+    * @serial
+    */
+    private final String lastName;
+
+    /**
+    * First name. Must be non-null.
+    * @serial
+    */
+    private final String firstName;
+
+    /**
+    * Middle name, or null if there is none.
+    * @serial
+    */
+    private final String middleName;
+    ... // Remainder omitted
+}
+```
+
+**Even if you decide that the default serialized form is appropriate, you often must provide a readObject method to ensure invariants and security.** 
+
+**Using the default serialized form when an object’s physical representation differs substantially from its logical data content has four disadvantages:**
+
+- **It permanently ties the exported API to the current internal representation.** In the above example, the private StringList.Entry class becomes part of the public API. If the representation is changed in a future release, the StringList class will still need to accept the linked list representation on input and generate it on output. The class will never be rid of all the code dealing with linked list entries, even if it doesn’t use them anymore.
+
+- **It can consume excessive space.** In the above example, the serialized form unnecessarily represents each entry in the linked list and all the links. These entries and links are mere implementation details, not worthy of inclusion in the serialized form. Because the serialized form is excessively large, writing it to disk or sending it across the network will be excessively slow.
+- **It can consume excessive time.** The serialization logic has no knowledge of the topology of the object graph, so it must go through an expensive graph traversal. In the example above, it would be sufficient simply to follow the next references.
+- **It can cause stack overflows.** The default serialization procedure performs a recursive traversal of the object graph, which can cause stack overflows even for moderately sized object graphs. Serializing a StringList instance with 1,000–1,800 elements generates a StackOverflowError on my machine. Surprisingly, the minimum list size for which serialization causes a stack overflow varies from run to run (on my machine). The minimum list size that exhibits this problem may depend on the platform implementation and command-line flags; some implementations may not have this problem at all.
+
+**Before deciding to make a field nontransient, convince yourself that its value is part of the logical state of the object.** 
+
+**you must impose any synchronization on object serialization that you would impose on any other method that reads the entire state of the object.** 
+
+```java
+// writeObject for synchronized class with default serialized form
+private synchronized void writeObject(ObjectOutputStream s) throws IOException {
+    s.defaultWriteObject();
+}
+```
+
+**Regardless of what serialized form you choose, declare an explicit serial version UID in every serializable class you write.** 
+
+```java
+private static final long serialVersionUID = randomLongValue;
+```
+
+It is not required that serial version UIDs be unique. 
+
+**Do not change the serial version UID unless you want to break compatibility with all existing serialized instances of a class.**
+
+ if you have decided that a class should be serializable (Item 86), think hard about what the serialized form should be. Use the default serialized form only if it is a reasonable description of the logical state of the object; otherwise design a custom serialized form that aptly describes the object. 
+
+### Item 88: Write readObject methods defensively
+
+**When an object is deserialized, it is critical to defensively copy any field containing an object reference that a client must not possess.** 
+
+```java
+// readObject method with defensive copying and validity checking
+private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
+    s.defaultReadObject();
+    // Defensively copy our mutable components
+    start = new Date(start.getTime());
+    end = new Date(end.getTime());
+    // Check that our invariants are satisfied
+    if (start.compareTo(end) > 0)
+        throw new InvalidObjectException(start +" after "+ end);
+}
+```
+
+ anytime you write a readObject method, adopt the mindset that you are writing a public constructor that must produce a valid instance regardless of what byte stream it is given.
+
+- For classes with object reference fields that must remain private, defensively copy each object in such a field. Mutable components of immutable classes fall into this category.
+
+- Check any invariants and throw an InvalidObjectException if a check fails. The checks should follow any defensive copying.
+- If an entire object graph must be validated after it is deserialized, use the ObjectInputValidation interface (not discussed in this book).
+- Do not invoke any overridable methods in the class, directly or indirectly.
+
+### Item 89: For instance control, prefer enum types to readResolve
+
+**if you depend on readResolve for instance control, all instance fields with object reference types must be declared transient.** 
+
+**The accessibility of readResolve is significant.** 
+
+use enum types to enforce instance control invariants wherever possible. 
+
+### Item 90: Consider serialization proxies instead of serialized instances
+
+serialization proxy
+
+```java
+// Serialization proxy for Period class
+private static class SerializationProxy implements Serializable {
+    private final Date start;
+    private final Date end;
+    SerializationProxy(Period p) {
+        this.start = p.start;
+        this.end = p.end;
+    }
+    private static final long serialVersionUID =234098243823485285L; // Any number will do (Item 87)
+}
+
+
+// writeReplace method for the serialization proxy pattern
+private Object writeReplace() {
+    return new SerializationProxy(this);
+}
+```
+
+Consider the serialization proxy pattern whenever you find yourself having to write a readObject or writeObject method on a class that is not extendable by its clients. This pattern is perhaps the easiest way to robustly serialize objects with nontrivial invariants.
+

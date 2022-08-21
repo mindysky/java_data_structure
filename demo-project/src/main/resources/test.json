@@ -3,12 +3,12 @@
     "system": "GGG",
     "itemList": [
       {
-        "itemid": "123",
+        "itemID": "123",
         "itemDate": "2021-10-10",
         "itemLive": true
       },
       {
-        "itemid": "567",
+        "itemID": "567",
         "itemDate": "2021-10-10",
         "itemLive": true
       }
@@ -18,12 +18,27 @@
     "system": "BBB",
     "itemList": [
       {
-        "itemid": "123",
+        "itemID": "123",
         "itemDate": "2021-10-10",
         "itemLive": true
       },
       {
-        "itemid": "345",
+        "itemID": "345",
+        "itemDate": "2021-10-10",
+        "itemLive": true
+      }
+    ]
+  },
+  {
+    "system": "CCC",
+    "itemList": [
+      {
+        "itemID": "123",
+        "itemDate": "2021-10-10",
+        "itemLive": true
+      },
+      {
+        "itemID": "345",
         "itemDate": "2021-10-10",
         "itemLive": true
       }

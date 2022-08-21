@@ -1,4 +1,4 @@
-package com.atguigu.srb.oss.service;
+package com.example.demoproject.demo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -24,5 +24,44 @@ public class TestOjects {
         private Object itemDate;
         @JsonProperty("itemLive")
         private Boolean itemLive;
+
+        public String getItemID() {
+            return itemID;
+        }
+
+        public Object getItemDate() {
+            return itemDate;
+        }
+
+
+        public Boolean getItemLive() {
+            return itemLive;
+        }
+
     }
+
+    @Override
+    public String toString() {
+        return "TestOjects{" +
+                "system='" + system + '\'' +
+                ", itemList=" + itemList +
+                '}';
+    }
+
+    public String getSystem() {
+        return system;
+    }
+
+    public void setSystem(String system) {
+        this.system = system;
+    }
+
+    public List<Item> getItemList() {
+        return itemList;
+    }
+
+    public void setItemList(List<Item> itemList) {
+        this.itemList = itemList;
+    }
+
 }

@@ -1,26 +1,22 @@
 package com.example.demoproject.aspect;
 
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-import com.alibaba.fastjson.JSON;
 
 @Aspect
 @Component
 @Slf4j
-public class TestAspectFun {
-    @Pointcut("execution(* com.example..demoproject.demo.DemoFilter.*(..))")
-    public void smsPointcut() {
+public class TestAspectRun {
+    @Pointcut("execution(public void com.example..demoproject.demo.Runner.*(..))")
+    public void myPointcut() {
     }
-
-//    @Pointcut("execution(* com.example..demoproject.controller.HelloController.*(..))")
-//    public void smsPointcut() {
-//    }
-    @Around("smsPointcut()")
+    @Around("myPointcut()")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Object result = proceedingJoinPoint.proceed();
